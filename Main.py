@@ -155,8 +155,12 @@ app.include_router(PublicBicycle.router)
 app.include_router(InterCityBusRoute.router)
 
 # 5.觀光資訊(Website)
-from Website.Information.Tourism import Main
+from Website.Information.Tourism import Main,TouristSpot,TouristHotel,TouristActivity,TouristFood
 app.include_router(Main.router)
+app.include_router(TouristSpot.router)
+app.include_router(TouristHotel.router)
+app.include_router(TouristActivity.router)
+app.include_router(TouristFood.router)
 
 # ---------------------------------------------------------------
 
