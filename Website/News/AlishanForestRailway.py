@@ -12,7 +12,7 @@ router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 collection = MongoDB.getCollection("traffic_hero","news_alishan_forest_railway")
 
 @router.put("/AlishanForestRailway",summary="【Update】最新消息-阿里山林業鐵路")
-async def updateNews(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
     一、資料來源: \n
             1. 交通部運輸資料流通服務平臺(TDX) - 阿里山林業鐵路最新消息 v3
@@ -25,7 +25,9 @@ async def updateNews(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    
+    return updateNews()
+
+def updateNews():
     collection.drop() # 刪除該collection所有資料
     
     try:

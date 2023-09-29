@@ -12,7 +12,7 @@ router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 collection = MongoDB.getCollection("traffic_hero","news_freeway")
 
 @router.put("/Freeway",summary="【Update】最新消息-高速公路")
-async def updateNews(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
     一、資料來源: \n
             1. 高速公路1968 - 最新消息
@@ -25,9 +25,9 @@ async def updateNews(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    
-    collection.drop() # 刪除該collection所有資料
-    
+    return updateNews()
+
+def updateNews():
     try:
         base_url = 'https://1968.freeway.gov.tw/n_whatsup?page=' # 網址
         total_pages = 2  # 總頁數
@@ -37,6 +37,7 @@ async def updateNews(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())
             page_url = base_url + str(page)
             all_data.extend(processData(page_url))
 
+        collection.drop() # 刪除該collection所有資料
         collection.insert_many(all_data)  # 將資料存入MongoDB
     except Exception as e:
         print(e)

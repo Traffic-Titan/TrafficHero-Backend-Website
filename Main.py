@@ -7,6 +7,7 @@ from fastapi.responses import RedirectResponse
 from api_analytics.fastapi import Analytics
 from Service.Database import MongoDBSingleton
 import Function.Time as Time
+from apscheduler.schedulers.background import BackgroundScheduler
 
 # ---------------------------------------------------------------
 
@@ -24,17 +25,19 @@ app = FastAPI() # 建立FastAPI物件
 app.add_middleware(Analytics, api_key="a2999611-b29a-4ade-a55b-2147b706da6e")  # Add middleware(Dev)
 app.middleware("http")(getExecutionTime) # 讓所有路由都可以計算執行時間
 MongoDB = MongoDBSingleton()
+scheduler = BackgroundScheduler() # 排程器
 
 # ---------------------------------------------------------------
 
 @app.on_event("startup")
 async def startup_event():
-    load_dotenv()
+    load_dotenv() # 讀取環境變數
+    scheduler.start() # 啟動排程
     # get_ConvenientStore()
     # SpeedLimit()
     # FreeWayTunnel()
     # getHardShoulder()
-    # Scheduler.start() # 啟動排程
+    # Scheduler.start() 
     # setInterval(Speed_Enforcement.getData())
     # setInterval(Technical_Enforcement.getData())
     # setInterval(PBS.getData())
@@ -65,50 +68,6 @@ app.include_router(GoogleMaps.router)
 app.include_router(TDX.router)
 app.include_router(Token.router)
 
-# # 0.會員管理(APP)
-# from APP.Account import Login, Register, SSO, Code, Password, Profile
-# app.include_router(Login.router)
-# app.include_router(Register.router)
-# app.include_router(SSO.router)
-# app.include_router(Password.router)
-# app.include_router(Code.router)
-# app.include_router(Profile.router)
-
-# # 0.群組通訊(APP)
-# from APP.Chat import Main
-# app.include_router(Main.router)
-
-# # 1.首頁(APP)
-# from APP.Home import Main, Weather, ParkingFee, OperationalStatus
-# app.include_router(Main.router)
-# app.include_router(Weather.router)
-# app.include_router(ParkingFee.router)
-# app.include_router(OperationalStatus.router)
-
-# # 2.最新消息(APP)
-# from APP.News import Car, Scooter, PublicTransport
-# app.include_router(Car.router)
-# app.include_router(Scooter.router)
-# app.include_router(PublicTransport.router)
-
-# # 3.即時訊息推播(APP)
-# from APP.CMS import Main,PBS
-# app.include_router(Main.router)
-# app.include_router(PBS.router)
-
-# # 4-1.道路資訊(APP)
-# from APP.Information.Road import Main
-# app.include_router(Main.router)
-
-# # 4-2.大眾運輸資訊(APP)
-# from APP.Information.PublicTransport import Main, PublicBicycle
-# app.include_router(Main.router)
-# app.include_router(PublicBicycle.router)
-
-# # 5.觀光資訊(APP)
-# from APP.Information.Tourism import Main
-# app.include_router(Main.router)
-
 # ---------------------------------------------------------------
 
 # 0.會員管理(Website)
@@ -125,19 +84,67 @@ app.include_router(Main.router)
 app.include_router(OperationalStatus.router)
 
 # 2.最新消息(Website)
-from Website.News import TaiwanRailway, TaiwanHighSpeedRail, MRT, Bus, IntercityBus, ProvincialHighway, LocalRoad, TaiwanTouristShuttle, Link, AlishanForestRailway, Freeway, PublicBicycle
-app.include_router(TaiwanRailway.router)
-app.include_router(TaiwanHighSpeedRail.router)
-app.include_router(MRT.router)
-app.include_router(Bus.router)
-app.include_router(IntercityBus.router)
-app.include_router(ProvincialHighway.router)
-app.include_router(LocalRoad.router)
-app.include_router(TaiwanTouristShuttle.router)
-app.include_router(AlishanForestRailway.router)
-app.include_router(Freeway.router)
-app.include_router(PublicBicycle.router)
-app.include_router(Link.router)
+from Website.News import TaiwanRailway as News_TaiwanRailway
+app.include_router(News_TaiwanRailway.router)
+
+from Website.News import TaiwanHighSpeedRail as News_TaiwanHighSpeedRail
+app.include_router(News_TaiwanHighSpeedRail.router)
+
+from Website.News import MRT as News_MRT
+app.include_router(News_MRT.router)
+
+from Website.News import Bus as News_Bus
+app.include_router(News_Bus.router)
+
+from Website.News import IntercityBus as News_IntercityBus
+app.include_router(News_IntercityBus.router)
+
+from Website.News import ProvincialHighway as News_ProvincialHighway
+app.include_router(News_ProvincialHighway.router)
+
+from Website.News import LocalRoad as News_LocalRoad
+app.include_router(News_LocalRoad.router)
+
+from Website.News import TaiwanTouristShuttle as News_TaiwanTouristShuttle
+app.include_router(News_TaiwanTouristShuttle.router)
+
+from Website.News import AlishanForestRailway as News_AlishanForestRailway
+app.include_router(News_AlishanForestRailway.router)
+
+from Website.News import Freeway as News_Freeway
+app.include_router(News_Freeway.router)
+
+from Website.News import PublicBicycle as News_PublicBicycle
+app.include_router(News_PublicBicycle.router)
+
+from Website.News import Link as News_Link
+app.include_router(News_Link.router)
+
+# 排程更新TDX最新消息
+global count
+count = 0
+
+def updateNews():
+    global count
+    count += 1
+    
+    print(f"Start: 更新TDX最新消息 - 第{count}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    News_AlishanForestRailway.updateNews()
+    News_Bus.updateNews()
+    News_Freeway.updateNews()
+    News_IntercityBus.updateNews()
+    News_LocalRoad.updateNews()
+    News_MRT.updateNews()
+    News_ProvincialHighway.updateNews()
+    News_PublicBicycle.updateNews()
+    News_TaiwanHighSpeedRail.updateNews()
+    News_TaiwanRailway.updateNews()
+    News_TaiwanTouristShuttle.updateNews()
+    
+    print(f"End: 更新TDX最新消息 - 第{count}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(updateNews, 'interval', minutes = 5)
 
 # 3.即時訊息推播(Website)
 from Website.CMS import Main
