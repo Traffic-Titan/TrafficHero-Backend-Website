@@ -17,7 +17,7 @@ router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 collection = MongoDB.getCollection("traffic_hero","news_bus")
 
 @router.put("/Bus",summary="【Update】最新消息-公車")
-async def updateNews(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())): 
+async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())): 
     """
     一、資料來源: \n
             1. 交通部運輸資料流通服務平臺(TDX)
@@ -32,7 +32,9 @@ async def updateNews(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    
+    return updateNews()
+
+def updateNews(): 
     collection.drop() # 刪除該collection所有資料
     
     for area in Area.english: # 依照區域更新資料
@@ -44,7 +46,7 @@ def dataToDatabase(area: str):
     try:
         url = Link.get("traffic_hero", "news_source", "bus", area) # 取得資料來源網址
         data = TDX.getData(url) # 取得資料
-        
+
         documents = []
         logo_url = Logo.get("bus", area) # 取得Logo
         for d in data: # 將資料轉換成MongoDB格式
