@@ -71,8 +71,13 @@ app.include_router(Token.router)
 # ---------------------------------------------------------------
 
 # 0.會員管理(Website)
-from Website.Account import Main
-app.include_router(Main.router)
+from Website.Account import Login, Register, SSO, Code, Password, Profile
+app.include_router(Login.router)
+app.include_router(Register.router)
+app.include_router(SSO.router)
+app.include_router(Password.router)
+app.include_router(Code.router)
+app.include_router(Profile.router)
 
 # 0.群組通訊(Website)
 from Website.Chat import Main
