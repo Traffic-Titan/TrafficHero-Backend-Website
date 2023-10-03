@@ -152,8 +152,8 @@ def updateNews():
 scheduler.add_job(updateNews, 'interval', minutes = 5)
 
 # 3.即時訊息推播(Website)
-from Website.CMS import Main
-app.include_router(Main.router)
+from Website.CMS import ServiceArea
+app.include_router(ServiceArea.router)
 
 # 4-1.道路資訊(Website)
 from Website.Information.Road import Main
