@@ -8,6 +8,7 @@ from api_analytics.fastapi import Analytics
 from Service.Database import MongoDBSingleton
 import Function.Time as Time
 from apscheduler.schedulers.background import BackgroundScheduler
+from fastapi.middleware.cors import CORSMiddleware
 
 # ---------------------------------------------------------------
 
@@ -24,6 +25,15 @@ async def getExecutionTime(request: Request, call_next): # 計算執行時間
 app = FastAPI() # 建立FastAPI物件
 app.add_middleware(Analytics, api_key="a2999611-b29a-4ade-a55b-2147b706da6e")  # Add middleware(Dev)
 app.middleware("http")(getExecutionTime) # 讓所有路由都可以計算執行時間
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://traffic-hero.eddie.tw/", "http://localhost", "https://localhost"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 MongoDB = MongoDBSingleton()
 scheduler = BackgroundScheduler() # 排程器
 
