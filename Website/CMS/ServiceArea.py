@@ -26,7 +26,7 @@ async def service_area(token: HTTPAuthorizationCredentials = Depends(HTTPBearer(
     chrome_options = webdriver.ChromeOptions() # 創建設定實例
     chrome_options.add_argument('--window-size=1920,1080')  # 指定解析度
     # driver = webdriver.Chrome(executable_path="chromedriver.exe", chrome_options=chrome_options) # 創建Chrome瀏覽器實例 (Dev for Windows)
-    driver = webdriver.Chrome(options=chrome_options) # 創建Chrome瀏覽器實例 (Dev for Linux)
+    driver = webdriver.Chrome(options=chrome_options) # 創建Chrome瀏覽器實例
 
     driver.get("https://1968.freeway.gov.tw/") # 打開「即時路況 - 交通部高速公路局」網站
     time.sleep(3) # 等待3秒，讓網站完全載入
@@ -44,7 +44,7 @@ async def service_area(token: HTTPAuthorizationCredentials = Depends(HTTPBearer(
         "泰安服務區(南向)" : (1083, 352),
         "泰安服務區(北向)" : (1095, 360),
         "西螺服務區(南向)" : (1035, 465),
-        "西螺服務區(北向)" : (1050, 465),
+        "西螺服務區(北向)" : (1052, 468),
         "新營服務區(南向)" : (1000, 555),
         "新營服務區(北向)" : (1020, 565),
         "仁德服務區(南向)" : (995, 650),
@@ -75,7 +75,7 @@ async def service_area(token: HTTPAuthorizationCredentials = Depends(HTTPBearer(
         x = value[0]
         y = value[1]
         color = screenshot.getpixel((x, y))
-        # print(f"位置 ({x}, {y}) 的顏色：{color}") # Dev
+        # print(f"{key}: 位置 ({x}, {y}) 的顏色：{color}") # Dev
         match color:
             case (0, 104, 55, 255):
                 parking_status.update({key: "未滿"}) # 綠色-未滿
