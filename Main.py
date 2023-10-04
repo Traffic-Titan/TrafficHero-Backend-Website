@@ -28,7 +28,7 @@ app.middleware("http")(getExecutionTime) # 讓所有路由都可以計算執行�
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://traffic-hero.eddie.tw/", "http://localhost", "https://localhost"],
+    allow_origins=["https://traffic-hero.eddie.tw/", "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
