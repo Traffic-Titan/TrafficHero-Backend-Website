@@ -18,7 +18,7 @@ async def TouristParking(token: HTTPAuthorizationCredentials = Depends(HTTPBeare
     四、說明 \n
             1.
     """
-    # Token.verifyToken(token.credentials,"admin") # JWT驗證
+    Token.verifyToken(token.credentials,"admin") # JWT驗證
     
     collection.drop() # 刪除該collection所有資料
     
