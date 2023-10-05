@@ -30,6 +30,11 @@ def dataToDatabase():
     try:
         url = f"https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity?%24format=JSON" # 取得資料來源網址
         data = TDX.getData(url) # 取得資料
+
+        # 處理無圖片的資料
+        for result in data:
+                if(result['Picture'].get('PictureUrl1') == None):
+                     result['Picture']['PictureUrl1'] = 'https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png'
         collection.insert_many(data) # 將資料存入MongoDB
     except Exception as e:
         print(e)
