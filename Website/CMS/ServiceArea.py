@@ -5,15 +5,19 @@ from selenium import webdriver
 import time
 from PIL import Image
 import os
+from Main import MongoDB # 引用MongoDB連線實例
+import Service.TDX as TDX
 
 router = APIRouter(tags=["3.即時訊息推播(Website)"],prefix="/Website/CMS")
 
-@router.get("/ServiceArea", summary="【Read】即時訊息推播-高速公路服務區停車位狀態")
-async def service_area(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+@router.put("/ServiceArea/ParkingStatus", summary="【Update】即時訊息推播-高速公路服務區停車位狀態")
+async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
     一、資料來源: \n
             1. 即時路況 - 交通部高速公路局
                 https://1968.freeway.gov.tw/ \n
+            2. 交通部運輸資料流通服務平臺(TDX) - 全臺高速公路服務區停車場剩餘位資料 v1
+                https://tdx.transportdata.tw/api-service/swagger/basic/945f57da-f29d-4dfd-94ec-c35d9f62be7d#/FreewayCarPark/ParkingApi_ParkingFreewayAvailability \n
     二、Input \n
             1. 
     三、Output \n
@@ -25,7 +29,6 @@ async def service_area(token: HTTPAuthorizationCredentials = Depends(HTTPBearer(
     
     chrome_options = webdriver.ChromeOptions() # 創建設定實例
     chrome_options.add_argument('--window-size=1920,1080')  # 指定解析度
-    # driver = webdriver.Chrome(executable_path="chromedriver.exe", chrome_options=chrome_options) # 創建Chrome瀏覽器實例 (Dev for Windows)
     driver = webdriver.Chrome(options=chrome_options) # 創建Chrome瀏覽器實例
 
     driver.get("https://1968.freeway.gov.tw/") # 打開「即時路況 - 交通部高速公路局」網站
@@ -69,27 +72,69 @@ async def service_area(token: HTTPAuthorizationCredentials = Depends(HTTPBearer(
         "石碇服務區(南北向)" : (1258, 233),
         "蘇澳服務區(南北向)" : (1281, 304),
     }
-
-    parking_status = {}
-    for key, value in serviceArea.items():
-        x = value[0]
-        y = value[1]
+    
+    def getStatus(name):
+        x = serviceArea[name][0]
+        y = serviceArea[name][1]
         color = screenshot.getpixel((x, y))
-        # print(f"{key}: 位置 ({x}, {y}) 的顏色：{color}") # Dev
+        # print(f"{name}: 位置 ({x}, {y}) 的顏色：{color}") # Dev
         match color:
             case (0, 104, 55, 255):
-                parking_status.update({key: "未滿"}) # 綠色-未滿
+                return "未滿" # 綠色-未滿
             case (251, 176, 59, 255):
-                parking_status.update({key: "將滿"}) # 黃色-將滿
+                return "將滿" # 黃色-將滿
             case (232, 10, 21, 255):
-                parking_status.update({key: "已滿"}) # 紅色-已滿
+                return "已滿" # 紅色-已滿
             case _:
-                parking_status.update({key: "無資料"}) # 無資料
+                return "無資料" # 無資料
 
-    result = {
-        "service_area_parking_status": parking_status,
-    }
+    
+    # 取得剩餘停車位數
+    url = "https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/ParkingAvailability/Road/Freeway/ServiceArea?%24format=JSON" 
+    dataAll = TDX.getData(url)
+    available_spaces = {}
+    for service in dataAll["ParkingAvailabilities"]:
+        available_spaces.update({service["CarParkName"]["Zh_tw"]: str(service["AvailableSpaces"])})
+
+    data = [
+        # 國道一號
+        {"name": "中壢服務區", "type": "南北向", "status": getStatus("中壢服務區(南北向)")},
+        {"name": "楊梅休息站", "type": "南向", "status": getStatus("楊梅休息站(南向)"), "available": available_spaces["楊梅休息站"]},
+        {"name": "湖口服務區", "type": "南向", "status": getStatus("湖口服務區(南向)")},
+        {"name": "湖口服務區", "type": "北向", "status": getStatus("湖口服務區(北向)")},
+        {"name": "泰安服務區", "type": "南向", "status": getStatus("泰安服務區(南向)")},
+        {"name": "泰安服務區", "type": "北向", "status": getStatus("泰安服務區(北向)")},
+        {"name": "西螺服務區", "type": "南向", "status": getStatus("西螺服務區(南向)")},
+        {"name": "西螺服務區", "type": "北向", "status": getStatus("西螺服務區(北向)")},
+        {"name": "新營服務區", "type": "南向", "status": getStatus("新營服務區(南向)")},
+        {"name": "新營服務區", "type": "北向", "status": getStatus("新營服務區(北向)")},
+        {"name": "仁德服務區", "type": "南向", "status": getStatus("仁德服務區(南向)")},
+        {"name": "仁德服務區", "type": "北向", "status": getStatus("仁德服務區(北向)")},
+        
+        # 國道三號
+        {"name": "木柵休息站", "type": "北向", "status": getStatus("木柵休息站(北向)")},
+        {"name": "關西服務區", "type": "南北向", "status": getStatus("關西服務區(南北向)"), "available": available_spaces["關西服務區"]},
+        {"name": "寶山休息站", "type": "南向", "status": getStatus("寶山休息站(南向)")},
+        {"name": "西湖服務區", "type": "南向", "status": getStatus("西湖服務區(南向)")},
+        {"name": "西湖服務區", "type": "北向", "status": getStatus("西湖服務區(北向)")},
+        {"name": "清水服務區", "type": "南北向", "status": getStatus("清水服務區(南北向)"), "available": available_spaces["清水服務區"]},
+        {"name": "南投服務區", "type": "南北向", "status": getStatus("南投服務區(南北向)"), "available": available_spaces["南投服務區"]},
+        {"name": "古坑服務區", "type": "南北向", "status": getStatus("古坑服務區(南北向)"), "available": available_spaces["古坑服務區"]},
+        {"name": "東山服務區", "type": "南北向", "status": getStatus("東山服務區(南北向)"), "available": available_spaces["東山服務區"]},
+        {"name": "新化休息站", "type": "南向", "status": getStatus("新化休息站(南向)")},
+        {"name": "新化休息站", "type": "北向", "status": getStatus("新化休息站(北向)")},
+        {"name": "關廟服務區", "type": "南向", "status": getStatus("關廟服務區(南向)")},
+        {"name": "關廟服務區", "type": "北向", "status": getStatus("關廟服務區(北向)")},
+        
+        # 國道五號
+        {"name": "石碇服務區", "type": "南北向", "status": getStatus("石碇服務區(南北向)"), "available": available_spaces["石碇服務區"]},
+        {"name": "蘇澳服務區", "type": "南北向", "status": getStatus("蘇澳服務區(南北向)")},
+    ]
+
+    collection = MongoDB.getCollection("traffic_hero","service_area_parking_status") # 取得MongoDB的collection
+    collection.delete_many({}) # 清空collection
+    collection.insert_many(data)
 
     os.remove("screenshot.png") # 刪除截圖
  
-    return result
+    return f"已更新筆數:{collection.count_documents({})}"
