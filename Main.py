@@ -170,11 +170,14 @@ from Website.Information.Road import Main
 app.include_router(Main.router)
 
 # 4-2.大眾運輸資訊(Website)
-from Website.Information.PublicTransport import Main, PublicBicycle,BusRoute,InterCityBusRoute
+from Website.Information.PublicTransport import Main, PublicBicycle,InterCityBusRoute
 app.include_router(Main.router)
-app.include_router(BusRoute.router)
 app.include_router(PublicBicycle.router)
 app.include_router(InterCityBusRoute.router)
+
+from Website.Information.PublicTransport.Bus import StopOfRoute, Route
+app.include_router(StopOfRoute.router)
+app.include_router(Route.router)
 
 # 5.觀光資訊(Website)
 from Website.Information.Tourism import Main,TouristSpot,TouristHotel,TouristActivity,TouristFood,TouristParking
