@@ -68,4 +68,4 @@ async def login(user: LoginModel, token: HTTPAuthorizationCredentials = Depends(
             "role": result["role"]
         }
 
-        return {"detail": "登入成功", "token": Token.encode(data, 43200)} # Token有效期為30天
+        return {"detail": "登入成功", "role": result["role"] , "token": Token.encode(data, 43200)} # Token有效期為30天
