@@ -179,6 +179,9 @@ from Website.Information.PublicTransport.Bus import StopOfRoute, Route
 app.include_router(StopOfRoute.router)
 app.include_router(Route.router)
 
+from Website.Information.PublicTransport.TaiwanRailway import Station
+app.include_router(Station.router)
+
 # 5.觀光資訊(Website)
 from Website.Information.Tourism import Main,TouristSpot,TouristHotel,TouristActivity,TouristFood,TouristParking
 app.include_router(Main.router)
