@@ -35,7 +35,7 @@ async def viewProfile(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()
         "gender": result["gender"] if "gender" in result else None,
         "birthday": result["birthday"] if "birthday" in result else None,
         "google_id": result["google_id"] if "google_id" in result else None,
-        "avatar": Blob.encode_image_to_base64(result["avatar"]) if "avatar" in result else None,
+        # "avatar": Blob.encode_image_to_base64(result["avatar"]) if "avatar" in result else None, # 待處理
         "rule": result["rule"] if "rule" in result else None
     }
     
