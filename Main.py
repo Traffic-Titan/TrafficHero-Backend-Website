@@ -95,8 +95,8 @@ from Website.Chat import Main
 app.include_router(Main.router)
 
 # 1.首頁(Website)
-from Website.Home import Main, OperationalStatus
-app.include_router(Main.router)
+from Website.Home import OperationalStatus, Weather
+app.include_router(Weather.router)
 app.include_router(OperationalStatus.router)
 
 # 2.最新消息(Website)
