@@ -195,7 +195,7 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                 "latitude": "25.000000", # Demo
                 "direction": "string", # Demo
                 "distance": 2.5, # Demo
-                "piority": "1", # Demo
+                "priority": "1", # Demo
                 "start": datetime.now(),
                 "end": datetime.now() + timedelta(hours=1),
                 "id": "string"
@@ -245,7 +245,7 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                 "latitude": "25.000000", # Demo
                 "direction": "string", # Demo
                 "distance": 2.5, # Demo
-                "piority": "1", # Demo
+                "priority": "1", # Demo
                 "start": datetime.now(),
                 "end": datetime.now() + timedelta(hours=1),
                 "id": "string"
