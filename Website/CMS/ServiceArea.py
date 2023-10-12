@@ -7,6 +7,8 @@ from PIL import Image
 import os
 from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
+import Website.CMS.CRUD as CMS
+from datetime import datetime, timedelta
 
 router = APIRouter(tags=["3.即時訊息推播(Website)"],prefix="/Website/CMS")
 
@@ -44,8 +46,8 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
         "楊梅休息站(南向)" : (1158, 236),
         "湖口服務區(南向)" : (1138, 248),
         "湖口服務區(北向)" : (1150, 260),
-        "泰安服務區(南向)" : (1083, 352),
-        "泰安服務區(北向)" : (1095, 360),
+        "泰安服務區(南向)" : (1077, 350),
+        "泰安服務區(北向)" : (1096, 361),
         "西螺服務區(南向)" : (1035, 465),
         "西螺服務區(北向)" : (1052, 468),
         "新營服務區(南向)" : (1000, 555),
@@ -136,5 +138,119 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
     collection.insert_many(data)
 
     os.remove("screenshot.png") # 刪除截圖
+    
+    for result in collection.find({}, {"_id": 0}): # Demo
+        if "available" in result:
+            content = {
+                "type": "高速公路服務區停車位狀態",
+                "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/ROC_Taiwan_Area_National_Freeway_Bureau_Logo.svg/200px-ROC_Taiwan_Area_National_Freeway_Bureau_Logo.svg.png",
+                "main_content": [
+                    [
+                        [
+                            f"{result['name']}"
+                        ]
+                    ],
+                    [
+                        [
+                            f"狀態:"
+                        ],
+                        [
+                            f"{result['status']}"
+                        ]
+                    ],
+                    [
+                        [
+                            f"尚有{result['available']}格停車位"
+                        ]
+                    ]
+                ],
+                "main_color": [
+                    [
+                        [
+                            "color 1"
+                        ]
+                    ],
+                    [
+                        [
+                            "color 2"
+                        ],
+                        [
+                            "color 3"
+                        ]
+                    ],
+                    [
+                        [
+                            "color 4"
+                        ]
+                    ]
+                ],
+                "sidebar_content": [
+                    "路肩開放"
+                ],
+                "sidebar_color": [
+                    "color 5"
+                ],
+                "voice": f"前方{result['name']}，目前還有{result['available']}格停車位，停車位{result['status']}",
+                "longitude": "121.000000", # Demo
+                "latitude": "25.000000", # Demo
+                "direction": "string", # Demo
+                "distance": 2.5, # Demo
+                "piority": "1", # Demo
+                "start": datetime.now(),
+                "end": datetime.now() + timedelta(hours=1),
+                "id": "string"
+                }
+        else:
+            content = {
+                "type": "高速公路服務區停車位狀態",
+                "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/ROC_Taiwan_Area_National_Freeway_Bureau_Logo.svg/200px-ROC_Taiwan_Area_National_Freeway_Bureau_Logo.svg.png",
+                "main_content": [
+                    [
+                        [
+                            f"{result['name']}"
+                        ]
+                    ],
+                    [
+                        [
+                            f"狀態:"
+                        ],
+                        [
+                            f"{result['status']}"
+                        ]
+                    ]
+                ],
+                "main_color": [
+                    [
+                        [
+                            "color 1"
+                        ]
+                    ],
+                    [
+                        [
+                            "color 2"
+                        ],
+                        [
+                            "color 3"
+                        ]
+                    ]
+                ],
+                "sidebar_content": [
+                    "路肩開放"
+                ],
+                "sidebar_color": [
+                    "color 5"
+                ],
+                "voice": f"前方{result['name']}，停車位{result['status']}",
+                "longitude": "121.000000", # Demo
+                "latitude": "25.000000", # Demo
+                "direction": "string", # Demo
+                "distance": 2.5, # Demo
+                "piority": "1", # Demo
+                "start": datetime.now(),
+                "end": datetime.now() + timedelta(hours=1),
+                "id": "string"
+                }
+
+        CMS.createContent("car", content)
  
     return f"已更新筆數:{collection.count_documents({})}"
