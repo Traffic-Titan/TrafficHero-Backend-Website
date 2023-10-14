@@ -172,8 +172,7 @@ from Website.Information.Road import Main
 app.include_router(Main.router)
 
 # 4-2.大眾運輸資訊(Website)
-from Website.Information.PublicTransport import Main, PublicBicycle,InterCityBusRoute
-app.include_router(Main.router)
+from Website.Information.PublicTransport import PublicBicycle,InterCityBusRoute
 app.include_router(PublicBicycle.router)
 app.include_router(InterCityBusRoute.router)
 
@@ -185,8 +184,7 @@ from Website.Information.PublicTransport.TaiwanRailway import Station
 app.include_router(Station.router)
 
 # 5.觀光資訊(Website)
-from Website.Information.Tourism import Main,TouristSpot,TouristHotel,TouristActivity,TouristFood,TouristParking
-app.include_router(Main.router)
+from Website.Information.Tourism import TouristSpot,TouristHotel,TouristActivity,TouristFood,TouristParking
 app.include_router(TouristSpot.router)
 app.include_router(TouristHotel.router)
 app.include_router(TouristActivity.router)

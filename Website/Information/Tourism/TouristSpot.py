@@ -20,11 +20,9 @@ async def TouristSpot(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
     
-    collection.drop() # 刪除該collection所有資料
-    
     dataToDatabase()
 
-    return f"已更新筆數:{collection.count_documents({})}"
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
 def dataToDatabase():
     try:
@@ -35,6 +33,8 @@ def dataToDatabase():
         for result in data:
                 if(result['Picture'].get('PictureUrl1') == None):
                      result['Picture']['PictureUrl1'] = 'https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png'
+        
+        collection.drop() # 刪除該collection所有資料
         collection.insert_many(data) # 將資料存入MongoDB
     except Exception as e:
-        print(e)
+        return {"message": f"更新失敗，錯誤訊息:{e}"}

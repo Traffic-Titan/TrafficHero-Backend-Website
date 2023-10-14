@@ -26,8 +26,6 @@ async def operationalstatus(token: HTTPAuthorizationCredentials = Depends(HTTPBe
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
 
-    collection.drop() # 刪除該collection所有資料
-
     # 城際
     TRA()
     THSR()
@@ -68,7 +66,7 @@ async def operationalstatus(token: HTTPAuthorizationCredentials = Depends(HTTPBe
     # 離島      
     Bus_v2("PenghuCounty")
     
-    return f"已更新筆數:{collection.count_documents({})}"
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
 def dataToDatabase(name: str, status:str):
     try:
@@ -79,9 +77,10 @@ def dataToDatabase(name: str, status:str):
             "logo_url": "https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png" # Dev
         }
 
+        collection.delete_many({"name": name}) # 刪除該類別的所有資料
         collection.insert_one(document) # 將資料存入MongoDB
     except Exception as e:
-        print(e)
+        return {"message": f"更新失敗，錯誤訊息:{e}"}
 
 def TRA(): # 臺鐵
     url = "https://tdx.transportdata.tw/api/basic/v3/Rail/TRA/Alert?%24format=JSON" # 先寫死，以後會再放到資料庫
