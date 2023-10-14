@@ -38,8 +38,6 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return updateNews()
 
 def updateNews():
-    collection.drop() # 刪除該collection所有資料
-    
     dataToDatabase("TaipeiCity") # 臺北捷運
     dataToDatabase("TaoyuanCity") # 桃園捷運
     dataToDatabase("KaohsiungCity") # 高雄捷運
@@ -66,6 +64,7 @@ def dataToDatabase(area: str):
             }
             documents.append(document)
 
+        collection.delete_many({"area": area}) # 刪除該區域所有資料
         collection.insert_many(documents) # 將資料存入MongoDB
     except Exception as e:
         print(e)

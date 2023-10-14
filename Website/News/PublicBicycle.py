@@ -31,8 +31,6 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return updateNews()
 
 def updateNews():   
-    collection.drop() # 刪除該collection所有資料
-    
     try:
         # Initial
         context = {}
@@ -51,7 +49,8 @@ def updateNews():
             soup = BeautifulSoup(response.read().decode('utf-8'),'html.parser')
             city_data = processData(area,soup)
             context_return.extend(city_data)
-    
+
+        collection.drop() # 刪除該collection所有資料
         collection.insert_many(context_return)
     except Exception as e:
         print(e)

@@ -35,7 +35,6 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return updateNews()
     
 def updateNews():
-    collection.drop() # 刪除該collection所有資料
     try:
         url = Link.get("traffic_hero", "news_source", "intercity_bus", "All") # 取得資料來源網址
         data = TDX.getData(url) # 取得資料
@@ -54,7 +53,8 @@ def updateNews():
                 "logo_url": logo_url
             }
             documents.append(document)
-
+            
+        collection.drop() # 刪除該collection所有資料
         collection.insert_many(documents) # 將資料存入MongoDB
     except Exception as e:
         print(e)
