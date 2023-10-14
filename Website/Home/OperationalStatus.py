@@ -74,7 +74,9 @@ def dataToDatabase(name: str, status:str):
     try:
         document = {
             "name": name,
-            "status": status
+            "status": status,
+            "status_text": "停止營運" if status == "red" else "部分營運" if status == "yellow" else "正常營運",
+            "logo_url": "https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png" # Dev
         }
 
         collection.insert_one(document) # 將資料存入MongoDB
@@ -82,7 +84,6 @@ def dataToDatabase(name: str, status:str):
         print(e)
 
 def TRA(): # 臺鐵
-    time.sleep(2) # 減緩call API頻率
     url = "https://tdx.transportdata.tw/api/basic/v3/Rail/TRA/Alert?%24format=JSON" # 先寫死，以後會再放到資料庫
     status = "無資料" # 預設
     
@@ -102,7 +103,6 @@ def TRA(): # 臺鐵
     dataToDatabase("臺鐵", status)
 
 def THSR(): # 高鐵
-    time.sleep(2) # 減緩call API頻率
     url = "https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/AlertInfo?%24format=JSON" # 先寫死，以後會再放到資料庫
     status = "無資料" # 預設
     
@@ -122,7 +122,6 @@ def THSR(): # 高鐵
     dataToDatabase("高鐵", status)
 
 def MRT(system: str): # 捷運
-    time.sleep(2) # 減緩call API頻率
     url = f"https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/Alert/{system}?%24format=JSON" # 先寫死，以後會再放到資料庫
     status = "無資料" # 預設
     
@@ -148,7 +147,6 @@ def MRT(system: str): # 捷運
             dataToDatabase("高雄捷運", status)
 
 def InterCityBus(): # 公路客運
-    time.sleep(2) # 減緩call API頻率
     url = "https://tdx.transportdata.tw/api/basic/v2/Bus/Alert/InterCity?%24format=JSON" # 先寫死，以後會再放到資料庫
     status = "無資料" # 預設
     
@@ -167,7 +165,6 @@ def InterCityBus(): # 公路客運
     dataToDatabase("公路客運", status)
 
 def Bus_v2(area: str): # 各縣市公車
-    time.sleep(2) # 減緩call API頻率
     url = f"https://tdx.transportdata.tw/api/basic/v2/Bus/Alert/City/{area}?%24format=JSON" # 先寫死，以後會再放到資料庫
     status = "無資料" # 預設
 
@@ -224,7 +221,6 @@ def Bus_v2(area: str): # 各縣市公車
             dataToDatabase("澎湖縣公車", status)
 
 def Bus_v3(area: str): # 各縣市公車
-    time.sleep(2) # 減緩call API頻率
     url = f"https://tdx.transportdata.tw/api/basic/v3/Bus/Alert/City/{area}?%24format=JSON" # 先寫死，以後會再放到資料庫
     status = "無資料" # 預設
 
