@@ -70,7 +70,7 @@ def dataToDatabase(area: str):
         collection.delete_many({"area": area}) # 刪除該區域所有資料
         collection.insert_many(documents) # 將資料存入MongoDB
     except Exception as e:
-        print(e)
+        return {"message": f"更新失敗，錯誤訊息:{e}"}
 
 def numberToText(number : int):
     match number:

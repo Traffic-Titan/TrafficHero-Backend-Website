@@ -57,7 +57,7 @@ def updateNews():
         collection.drop() # 刪除該collection所有資料
         collection.insert_many(documents) # 將資料存入MongoDB
     except Exception as e:
-        print(e)
+        return {"message": f"更新失敗，錯誤訊息:{e}"}
         
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 

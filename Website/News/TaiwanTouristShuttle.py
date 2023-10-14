@@ -66,7 +66,7 @@ def dataToDatabase(area: str):
         collection.drop() # 刪除該collection所有資料
         collection.insert_many(documents) # 將資料存入MongoDB
     except Exception as e:
-        print(e)
+        return {"message": f"更新失敗，錯誤訊息:{e}"}
 
 def numberToText(number : int): # 官方未提供代碼轉換，此功能可能有問題
     match number:
