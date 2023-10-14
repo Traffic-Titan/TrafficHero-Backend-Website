@@ -40,13 +40,12 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return updateNews()
 
 def updateNews():   
-    collection.drop() # 刪除該collection所有資料
     areas = ["TaichungCity","TainanCity","PingtungCounty","YilanCounty"]
     
     for area in areas: # 依照區域更新資料
         dataToDatabase(area)
 
-    return f"已更新筆數:{collection.count_documents({})}"
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
     
 def dataToDatabase(area: str):
     try:
@@ -67,9 +66,11 @@ def dataToDatabase(area: str):
                 "logo_url": logo_url
             }
             documents.append(document)
+            
+        collection.delete_many({"area": area}) # 刪除該區域所有資料
         collection.insert_many(documents) # 將資料存入MongoDB
     except Exception as e:
-        print(e)
+        return {"message": f"更新失敗，錯誤訊息:{e}"}
 
 def numberToText(number : int):
     match number:
