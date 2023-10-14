@@ -44,7 +44,7 @@ def updateNews():
     dataToDatabase("TaoyuanCity") # 桃園捷運
     dataToDatabase("KaohsiungCity") # 高雄捷運
             
-    return f"已更新筆數:{collection.count_documents({})}"
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
 def dataToDatabase(area: str):
     try:

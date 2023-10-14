@@ -46,7 +46,7 @@ def updateNews():
     for area in areas: # 依照區域更新資料
         dataToDatabase(area)
 
-    return f"已更新筆數:{collection.count_documents({})}"
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
     
 def dataToDatabase(area: str):
     try:

@@ -60,5 +60,5 @@ def updateNews():
     except Exception as e:
         print(e)
         
-    return f"已更新筆數:{collection.count_documents({})}"
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
     
