@@ -22,16 +22,16 @@ async def update(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
 
-    collection.drop() # 刪除該collection所有資料
-
     try:
         url = f"https://tdx.transportdata.tw/api/basic/v3/Rail/TRA/Station?%24format=JSON" # 取得資料來源網址
         data = TDX.getData(url) # 取得資料
         
         stations = data.get("Stations", [])
+        
+        collection.drop() # 刪除該collection所有資料
         collection.insert_many(stations) # 將資料存入MongoDB
     except Exception as e:
-        print(e)
+        return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    return f"已更新筆數:{collection.count_documents({})}"
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
     

@@ -253,4 +253,4 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
 
         CMS.createContent("car", content)
  
-    return f"已更新筆數:{collection.count_documents({})}"
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
