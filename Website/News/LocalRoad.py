@@ -25,10 +25,8 @@ collection = MongoDB.getCollection("traffic_hero","news_local_road")
 async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
     一、資料來源: \n
-            1. 交通部運輸資料流通服務平臺(TDX)
-                資料類型: 最新消息
-                領域類型: 縣市即時路況
-                https://tdx.transportdata.tw/data-service/basic/ \n
+            1. 交通部運輸資料流通服務平臺(TDX) - 地區道路最新消息資料
+                https://tdx.transportdata.tw/api-service/swagger/basic/7f07d940-91a4-495d-9465-1c9df89d709c#/CityTraffic/Live_News_City \n
     二、Input \n
             1. 
     三、Output \n
@@ -40,7 +38,7 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return updateNews()
 
 def updateNews():   
-    areas = ["TaichungCity","TainanCity","PingtungCounty","YilanCounty"]
+    areas = ["TaichungCity","TainanCity","PingtungCounty","YilanCounty","MiaoliCounty","ChanghuaCounty","YunlinCounty","NewTaipei"]
     
     for area in areas: # 依照區域更新資料
         dataToDatabase(area)

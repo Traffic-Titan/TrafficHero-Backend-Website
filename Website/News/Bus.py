@@ -20,10 +20,8 @@ collection = MongoDB.getCollection("traffic_hero","news_bus")
 async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())): 
     """
     一、資料來源: \n
-            1. 交通部運輸資料流通服務平臺(TDX)
-                資料類型: 最新消息
-                領域類型: 市區公車
-                https://tdx.transportdata.tw/data-service/basic/ \n
+            1. 交通部運輸資料流通服務平臺(TDX) - 市區公車最新消息資料
+                https://tdx.transportdata.tw/api-service/swagger/basic/2998e851-81d0-40f5-b26d-77e2f5ac4118#/CityBus/CityBusApi_News_2044 \n
     二、Input \n
             1. 
     三、Output \n
@@ -80,12 +78,6 @@ def numberToText(number : int):
         case 6:
             return "系統公告"
         case 7:
-            return "新服務上架"
-        case 8:
-            return "API修正"
-        case 9:
-            return "來源異常"
-        case 10:
-            return "資料更新"
+            return "通阻資訊"
         case 99:
             return "其他"

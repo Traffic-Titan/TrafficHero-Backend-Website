@@ -76,12 +76,6 @@ def numberToText(number : int):
         case 6:
             return "系統公告"
         case 7:
-            return "新服務上架"
-        case 8:
-            return "API修正"
-        case 9:
-            return "來源異常"
-        case 10:
-            return "資料更新"
+            return "通阻資訊"
         case 99:
             return "其他"

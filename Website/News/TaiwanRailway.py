@@ -81,7 +81,5 @@ def numberToText(number : int):
             return "API修正"
         case 9:
             return "來源異常"
-        case 10:
-            return "資料更新"
         case 99:
             return "其他"
