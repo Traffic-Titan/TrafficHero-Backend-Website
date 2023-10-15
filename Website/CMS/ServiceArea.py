@@ -167,20 +167,20 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                 "main_color": [
                     [
                         [
-                            "color 1"
+                            "#FFFFFF"
                         ]
                     ],
                     [
                         [
-                            "color 2"
+                            "#FFFFFF"
                         ],
                         [
-                            "color 3"
+                            "#FFFFFF"
                         ]
                     ],
                     [
                         [
-                            "color 4"
+                            "#FFFFFF"
                         ]
                     ]
                 ],
@@ -188,7 +188,7 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                     "路肩開放"
                 ],
                 "sidebar_color": [
-                    "color 5"
+                    "#FFFFFF"
                 ],
                 "voice": f"前方{result['name']}，目前還有{result['available']}格停車位，停車位{result['status']}",
                 "longitude": "121.000000", # Demo
@@ -197,7 +197,7 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                 "distance": 2.5, # Demo
                 "priority": "1", # Demo
                 "start": datetime.now(),
-                "end": datetime.now() + timedelta(hours=1),
+                "end": datetime.now() + timedelta(hours=10000), # Demo
                 "id": "string"
                 }
         else:
@@ -222,15 +222,15 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                 "main_color": [
                     [
                         [
-                            "color 1"
+                            "#FFFFFF"
                         ]
                     ],
                     [
                         [
-                            "color 2"
+                            "#FFFFFF"
                         ],
                         [
-                            "color 3"
+                            "#FFFFFF"
                         ]
                     ]
                 ],
@@ -238,7 +238,7 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                     "路肩開放"
                 ],
                 "sidebar_color": [
-                    "color 5"
+                    "#FFFFFF"
                 ],
                 "voice": f"前方{result['name']}，停車位{result['status']}",
                 "longitude": "121.000000", # Demo
@@ -247,7 +247,7 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                 "distance": 2.5, # Demo
                 "priority": "1", # Demo
                 "start": datetime.now(),
-                "end": datetime.now() + timedelta(hours=1),
+                "end": datetime.now() + timedelta(hours=10000), # Demo
                 "id": "string"
                 }
 
