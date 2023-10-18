@@ -7,7 +7,7 @@ import Function.VerificationCode as Code
 from Main import MongoDB # 引用MongoDB連線實例
 import Service.Token as Token
 
-router = APIRouter(tags=["0.會員管理(APP)"],prefix="/APP/Account")
+router = APIRouter(tags=["0.會員管理(Website)"],prefix="/Website/Account")
 
 class VerifyCodeModel(BaseModel):
     email: EmailStr

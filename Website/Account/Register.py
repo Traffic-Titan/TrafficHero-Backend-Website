@@ -13,7 +13,7 @@ import Function.Message as Message
 import Service.Token as Token
 import bcrypt
 
-router = APIRouter(tags=["0.會員管理(APP)"],prefix="/APP/Account")
+router = APIRouter(tags=["0.會員管理(Website)"],prefix="/Website/Account")
 
 class ProfileModel(BaseModel):
     name: str
