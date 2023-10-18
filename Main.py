@@ -137,14 +137,14 @@ from Website.News import Link as News_Link
 app.include_router(News_Link.router)
 
 # 排程更新TDX最新消息
-global count
-count = 0
+global count_updateNews
+count_updateNews = 0
 
 def updateNews():
-    global count
-    count += 1
+    global count_updateNews
+    count_updateNews += 1
     
-    print(f"Start: 更新TDX最新消息 - 第{count}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    print(f"S: 更新TDX - 最新消息 - 第{count_updateNews}次 - {Time.format(str(Time.getCurrentDatetime()))}")
     
     News_AlishanForestRailway.updateNews()
     News_Bus.updateNews()
@@ -158,7 +158,7 @@ def updateNews():
     News_TaiwanRailway.updateNews()
     News_TaiwanTouristShuttle.updateNews()
     
-    print(f"End: 更新TDX最新消息 - 第{count}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    print(f"E: 更新TDX - 最新消息 - 第{count_updateNews}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
 scheduler.add_job(updateNews, 'interval', minutes = 5)
 
@@ -193,6 +193,27 @@ app.include_router(TouristHotel.router)
 app.include_router(TouristActivity.router)
 app.include_router(TouristFood.router)
 app.include_router(TouristParking.router)
+
+# 排程更新TDX最新消息
+global count_updateTourismData
+count_updateTourismData = 0
+
+def updateTourismData():
+    global count_updateTourismData
+    count_updateTourismData += 1
+    
+    print(f"S: 更新TDX - 觀光資訊 - 第{count_updateTourismData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    TouristActivity.updateTouristActivity()
+    TouristFood.updateTouristFood()
+    TouristHotel.updateTouristHotel()
+    TouristParking.updateTouristParking()
+    TouristSpot.updateTouristSpot()
+    
+    print(f"E: 更新TDX - 觀光資訊 - 第{count_updateTourismData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(updateTourismData, 'interval', minutes = 1440) # 每天更新一次
+
 
 # ---------------------------------------------------------------
 
