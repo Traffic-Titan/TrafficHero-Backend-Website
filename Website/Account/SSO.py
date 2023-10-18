@@ -43,5 +43,5 @@ async def googleSSO(user: LoginModel, token: HTTPAuthorizationCredentials = Depe
             "role": result["role"]
         }
         
-        return {"detail": "登入成功", "token": Token.encode(data, 43200)} # Token有效期為30天
+        return {"message": "登入成功", "token": Token.encode(data, 43200), "role": result["role"]} # Token有效期為30天
     
