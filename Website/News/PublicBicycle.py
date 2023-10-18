@@ -113,6 +113,7 @@ def processData(area, soup): # 尚未完成縣市分類
         document = {
             "area": area,
             "title": title_array[data],
+            "news_category": "站點公告",
             "update_time": publicTime_array[data],
             "news_url": url_array[data],
             "logo_url": logo_url
