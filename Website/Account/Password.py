@@ -10,7 +10,7 @@ import Service.Email as Email
 import Function.Time as Time
 import bcrypt
 
-router = APIRouter(tags=["0.會員管理(APP)"],prefix="/APP/Account")
+router = APIRouter(tags=["0.會員管理(Website)"],prefix="/Website/Account")
 
 class ChangePasswordModel(BaseModel):
     email: EmailStr

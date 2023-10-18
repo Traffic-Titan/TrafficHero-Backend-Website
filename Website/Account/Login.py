@@ -8,7 +8,7 @@ import Function.Time as Time
 from datetime import timedelta
 import bcrypt
 
-router = APIRouter(tags=["0.會員管理(APP)"],prefix="/APP/Account")
+router = APIRouter(tags=["0.會員管理(Website)"],prefix="/Website/Account")
 
 class LoginModel(BaseModel):
     email: EmailStr

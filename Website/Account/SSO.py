@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import Service.Token as Token
 from Function.Blob import *
 
-router = APIRouter(tags=["0.會員管理(APP)"],prefix="/APP/Account")
+router = APIRouter(tags=["0.會員管理(Website)"],prefix="/Website/Account")
 
 class LoginModel(BaseModel):
     email: EmailStr
