@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import Service.Token as Token
 from Function.Blob import *
 
-router = APIRouter(tags=["0.會員管理(Website)"],prefix="/Website/Account")
+router = APIRouter(tags=["0.會員管理(APP)"],prefix="/APP/Account")
 
 class LoginModel(BaseModel):
     email: EmailStr
@@ -43,5 +43,5 @@ async def googleSSO(user: LoginModel, token: HTTPAuthorizationCredentials = Depe
             "role": result["role"]
         }
         
-        return {"detail": "登入成功", "role": result["role"] , "token": Token.encode(data, 43200)} # Token有效期為30天
+        return {"detail": "登入成功", "token": Token.encode(data, 43200)} # Token有效期為30天
     
