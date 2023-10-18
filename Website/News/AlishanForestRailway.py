@@ -36,7 +36,31 @@ def updateNews():
         logo_url = Logo.get("alishan_forest_railway", "All") # 取得Logo
         for d in data["Newses"]: # 將資料整理成MongoDB的格式
             document = {
-                "area": "All",
+                "area": "ChiayiCity",
+                "news_id": d['NewsID'],
+                "title": d['Title'],
+                "news_category": numberToText(d['NewsCategory']),
+                "description": d['Description'],
+                "news_url": d['NewsURL'] if 'NewsURL' in d else "",
+                "update_time": Time.format(d['UpdateTime']),
+                "logo_url": logo_url
+            }
+            documents.append(document)
+            
+            document = {
+                "area": "ChiayiCounty",
+                "news_id": d['NewsID'],
+                "title": d['Title'],
+                "news_category": numberToText(d['NewsCategory']),
+                "description": d['Description'],
+                "news_url": d['NewsURL'] if 'NewsURL' in d else "",
+                "update_time": Time.format(d['UpdateTime']),
+                "logo_url": logo_url
+            }
+            documents.append(document)
+            
+            document = {
+                "area": "NantouCounty",
                 "news_id": d['NewsID'],
                 "title": d['Title'],
                 "news_category": numberToText(d['NewsCategory']),

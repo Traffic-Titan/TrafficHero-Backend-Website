@@ -82,11 +82,39 @@ def processData(area, soup): # 尚未完成縣市分類
     logo_url = Logo.get("public_bicycle", "All") # 取得Logo
     
     for data in range(0,len(all_title)):
+        match area:
+            case "taipei":
+                area = "TaipeiCity"
+            case "ntpc":
+                area = "NewTaipeiCity"
+            case "tycg":
+                area = "TaoyuanCity"
+            case "hsinchu":
+                area = "HsinchuCounty"
+            case "hccg":
+                area = "HsinchuCity"
+            case "sipa":
+                area = "HsinchuCity"
+            case "miaoli":
+                area = "MiaoliCounty"
+            case "i":
+                area = "TaichungCity"
+            case "chiayi":
+                area = "ChiayiCity"
+            case "tainan":
+                area = "TainanCity"
+            case "kcg":
+                area = "KaohsiungCity"
+            case "pthg":
+                area = "PingtungCounty"
+            case _:
+                area = area
+        
         document = {
-            "area":"All", # 尚未完成縣市分類
-            "title":title_array[data],
-            "update_time":publicTime_array[data],
-            "news_url":url_array[data],
+            "area": area,
+            "title": title_array[data],
+            "update_time": publicTime_array[data],
+            "news_url": url_array[data],
             "logo_url": logo_url
         }
         documents.append(document)
