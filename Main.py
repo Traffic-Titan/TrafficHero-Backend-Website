@@ -171,6 +171,9 @@ app.include_router(ServiceArea.router)
 from Website.Information.Road import Main
 app.include_router(Main.router)
 
+from Website.Information.Road.Parking.OnStreet import Taichung
+app.include_router(Taichung.router)
+
 # 4-2.大眾運輸資訊(Website)
 from Website.Information.PublicTransport import PublicBicycle,InterCityBusRoute
 app.include_router(PublicBicycle.router)
