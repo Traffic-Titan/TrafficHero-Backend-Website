@@ -3,6 +3,7 @@ uvicorn[standard]
 selenium
 webdriver-manager
 shapely
+selenium
 geopy
 python-dotenv
 openai
@@ -16,3 +17,4 @@ fastapi-analytics
 beautifulsoup4
 scipy
 httpx
+bcrypt
