@@ -63,8 +63,8 @@ async def register(user: ProfileModel, token: HTTPAuthorizationCredentials = Dep
         verification_code = Code.generateCode()
         
         current_time = Time.getCurrentTimestamp() # 獲取當前時間戳
-        expiration_time = datetime.fromtimestamp(current_time) + timedelta(minutes=10)  # 計算驗證碼的過期時間
-        expiration_time_str = expiration_time.strftime("%Y/%m/%d %H:%M")  # 格式化過期時間(YYYY/MM/DD HH:MM)
+        expiration_time = datetime.fromtimestamp(current_time) + timedelta(minutes=10) + timedelta(hours=8) # 計算驗證碼的過期時間 (轉換成台灣時間，伺服器時區為UTC+0)
+        expiration_time_str = expiration_time.strftime("%Y/%m/%d %H:%M") # 格式化過期時間(YYYY/MM/DD HH:MM) 
         
         collection.update_one({"email": user.email}, {"$set": {"verification_code": verification_code, "timestamp": current_time}})
         
