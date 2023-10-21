@@ -13,10 +13,10 @@ import Function.Time as Time
 import Function.Link as Link
 from Main import MongoDB # 引用MongoDB連線實例
 import Function.Logo as Logo
+import Function.Area as Area
+from bson import ObjectId
 
 router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
-
-collection = MongoDB.getCollection("traffic_hero","news_provincial_highway")
 
 """
 資料來源:省道最新消息
@@ -56,30 +56,72 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
 
 def updateNews():
     try:
-        url = Link.get("traffic_hero", "news_source", "provincial_highway", "All") # 取得資料來源網址
-        data = TDX.getData(url) # 取得資料
+        url = Link.get("traffic_hero", "news_source", "provincial_highway", "All")
+        data = TDX.getData(url)
         
         documents = []
-        logo_url = Logo.get("provincial_highway", "All") # 取得Logo
-        for d in data["Newses"]: # 將資料整理成MongoDB的格式
-            document = {
-                "area": "All",
-                "news_id": d['NewsID'],
-                "title": d['Title'],
-                "news_category": numberToText(d['NewsCategory']),
-                "description": d['Description'],
-                "news_url": d['NewsURL'] if 'NewsURL' in d else "",
-                "update_time": Time.format(d['UpdateTime']),
-                "logo_url": logo_url
-            }
-            documents.append(document)
+        logo_url = Logo.get("provincial_highway", "All")
+        
+        collection = MongoDB.getCollection("traffic_hero", "road_area")
+        for d in data["Newses"]:
+            patterns = [r"台\d", r"國\d"]
+            pattern = "|".join(patterns)
+            match = re.search(pattern, d['Title'])
+            
+            if match:
+                result = collection.find_one({"RoadName": match.group()}, {"_id": 0, "CityList": 1})
+                for area in result.get("CityList"):
+                    document = {
+                        "area": Area.chineseToEnglish(area.get("CityName")),
+                        "news_id": d['NewsID'],
+                        "title": d['Title'],
+                        "news_category": numberToText(d['NewsCategory']),
+                        "description": d['Description'],
+                        "news_url": d['NewsURL'] if 'NewsURL' in d else "",
+                        "update_time": Time.format(d['UpdateTime']),
+                        "logo_url": logo_url
+                    }
+                    documents.append(document)
+                continue
 
-        collection.drop() # 刪除該collection所有資料
-        collection.insert_many(documents) # 將資料存入MongoDB
+            for area in Area.chinese:
+                short_name = area[:2]
+                if short_name in d['Title']:
+                    document = {
+                        "area": Area.chineseToEnglish(area),
+                        "news_id": d['NewsID'],
+                        "title": d['Title'],
+                        "news_category": numberToText(d['NewsCategory']),
+                        "description": d['Description'],
+                        "news_url": d['NewsURL'] if 'NewsURL' in d else "",
+                        "update_time": Time.format(d['UpdateTime']),
+                        "logo_url": logo_url
+                    }
+                    documents.append(document)
+                    break
+
+            else:
+                document = {
+                    "area": "All",
+                    "news_id": d['NewsID'],
+                    "title": d['Title'],
+                    "news_category": numberToText(d['NewsCategory']),
+                    "description": d['Description'],
+                    "news_url": d['NewsURL'] if 'NewsURL' in d else "",
+                    "update_time": Time.format(d['UpdateTime']),
+                    "logo_url": logo_url
+                }
+                documents.append(document)
+
+
+        collection = MongoDB.getCollection("traffic_hero", "news_provincial_highway")
+        collection.drop()
+        collection.insert_many(documents)
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
         
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+
 
 def numberToText(number : int):
     match number:
