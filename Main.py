@@ -95,9 +95,12 @@ from Website.Chat import Main
 app.include_router(Main.router)
 
 # 1.首頁(Website)
-from Website.Home import OperationalStatus, Weather
-app.include_router(Weather.router)
+from Website.Home import OperationalStatus
 app.include_router(OperationalStatus.router)
+
+from Website.Home.Weather import Icon, Station
+app.include_router(Icon.router) 
+app.include_router(Station.router)
 
 # 2.最新消息(Website)
 from Website.News import TaiwanRailway as News_TaiwanRailway
