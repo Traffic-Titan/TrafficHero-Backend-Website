@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import Service.Token as Token
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 from PIL import Image
 import os
@@ -31,7 +32,7 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
     
     chrome_options = webdriver.ChromeOptions() # 創建設定實例
     chrome_options.add_argument('--window-size=1920,1080')  # 指定解析度
-    driver = webdriver.Chrome(options=chrome_options) # 創建Chrome瀏覽器實例
+    driver = webdriver.Chrome(options=chrome_options)
 
     driver.get("https://1968.freeway.gov.tw/") # 打開「即時路況 - 交通部高速公路局」網站
     time.sleep(3) # 等待3秒，讓網站完全載入
