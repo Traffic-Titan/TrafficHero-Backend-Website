@@ -207,8 +207,10 @@ app.include_router(CRUD.router)
 app.include_router(ServiceArea.router)
 
 # 4-1.道路資訊(Website)
-from Website.Information.Road import Main
+from Website.Information.Road import Main,CityCarPark_ParkingNum,CityCarPark_ParkingInfo
 app.include_router(Main.router)
+app.include_router(CityCarPark_ParkingNum.router)
+app.include_router(CityCarPark_ParkingInfo.router)
 
 from Website.Information.Road.Parking.OnStreet import Taichung
 app.include_router(Taichung.router)
