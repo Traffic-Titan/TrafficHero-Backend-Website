@@ -98,9 +98,43 @@ app.include_router(Main.router)
 from Website.Home import OperationalStatus
 app.include_router(OperationalStatus.router)
 
-from Website.Home.Weather import Icon, Station
-app.include_router(Icon.router) 
-app.include_router(Station.router)
+from Website.Home.Weather import Icon, Station as WeatherStation, StationList as WeatherStationList
+app.include_router(Icon.router)
+app.include_router(WeatherStation.router)
+app.include_router(WeatherStationList.router)
+
+# 排程更新 - 中央氣象署 - 無人氣象測站清單
+global count_updateWeatherStation
+count_updateWeatherStation = 0
+
+def updateWeatherStation():
+    global count_updateWeatherStation
+    count_updateWeatherStation += 1
+    
+    print(f"S: 更新中央氣象署 - 無人氣象測站資料 - 第{count_updateWeatherStation}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    WeatherStation.updateStation()
+    
+    print(f"E: 更新中央氣象署 - 無人氣象測站資料 - 第{count_updateWeatherStation}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(updateWeatherStation, 'interval', minutes = 10)
+
+# 排程更新 - 中央氣象署 - 無人氣象測站清單
+global count_updateWeatherStationList
+count_updateWeatherStationList = 0
+
+def updateWeatherStationList():
+    global count_updateWeatherStationList
+    count_updateWeatherStationList += 1
+    
+    print(f"S: 更新中央氣象署 - 無人氣象測站清單 - 第{count_updateWeatherStationList}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    WeatherStationList.updateStationList()
+    
+    print(f"E: 更新中央氣象署 - 無人氣象測站清單 - 第{count_updateWeatherStationList}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(updateWeatherStationList, 'interval', minutes = 1440) # 每天更新一次
+
 
 # 2.最新消息(Website)
 from Website.News import TaiwanRailway as News_TaiwanRailway
