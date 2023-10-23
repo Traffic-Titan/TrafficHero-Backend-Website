@@ -135,8 +135,10 @@ def updateWeatherStationList():
 
 scheduler.add_job(updateWeatherStationList, 'interval', minutes = 1440) # 每天更新一次
 
-from Website.Home.RoadCondition import ProvincialHighway
+from Website.Home.RoadCondition import Main, ProvincialHighway, Freeway
+app.include_router(Main.router)
 app.include_router(ProvincialHighway.router)
+app.include_router(Freeway.router)
 
 # 2.最新消息(Website)
 from Website.News import TaiwanRailway as News_TaiwanRailway
