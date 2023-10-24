@@ -141,6 +141,10 @@ app.include_router(ProvincialHighway.router)
 app.include_router(Freeway.router)
 app.include_router(LocalRoad.router)
 
+from Website.Home.QuickSearch import GasStation, ConvenientStore
+app.include_router(GasStation.router)
+app.include_router(ConvenientStore.router)
+
 # 2.最新消息(Website)
 from Website.News import TaiwanRailway as News_TaiwanRailway
 app.include_router(News_TaiwanRailway.router)
