@@ -35,6 +35,9 @@ def updateRoadCondition():
                 
                 collection = MongoDB.getCollection("traffic_hero","road_condition_freeway")
                 documents.extend(collection.find({},{"_id":0}))
+                
+                collection = MongoDB.getCollection("traffic_hero","road_condition_local_road")
+                documents.extend(collection.find({},{"_id":0}))
 
                 collection = MongoDB.getCollection("traffic_hero","road_condition")
                 collection.drop() # 刪除該collection所有資料
