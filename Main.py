@@ -95,8 +95,25 @@ from Website.Chat import Main
 app.include_router(Main.router)
 
 # 1.首頁(Website)
-from Website.Home import OperationalStatus
+from Website.Home import OperationalStatus, ParkingFee
 app.include_router(OperationalStatus.router)
+app.include_router(ParkingFee.router)
+
+# 排程更新 - 各縣市路邊停車費 - 系統狀態
+global count_updateParkingFee_SystemStatus
+count_updateParkingFee_SystemStatus = 0
+
+def updateParkingFee_SystemStatus():
+    global count_updateParkingFee_SystemStatus
+    count_updateParkingFee_SystemStatus += 1
+    
+    print(f"S: 更新各縣市路邊停車費 - 系統狀態 - 第{count_updateParkingFee_SystemStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    ParkingFee.updateParkingFee_SystemStatus()
+    
+    print(f"E: 更新各縣市路邊停車費 - 系統狀態 - 第{count_updateParkingFee_SystemStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(updateParkingFee_SystemStatus, 'interval', minutes = 1)
 
 from Website.Home.Weather import Icon, Station as WeatherStation, StationList as WeatherStationList
 app.include_router(Icon.router)
