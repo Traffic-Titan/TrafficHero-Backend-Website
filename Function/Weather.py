@@ -17,7 +17,7 @@ import os
 from datetime import datetime, timedelta
 import time
 
-async def getWeather(longitude: str, latitude: str):
+def getWeather(longitude: str, latitude: str):
     try:
         # Initial
         nearestRange = 1

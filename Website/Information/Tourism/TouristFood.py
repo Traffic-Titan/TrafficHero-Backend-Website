@@ -21,9 +21,9 @@ async def updateTouristFoodAPI(token: HTTPAuthorizationCredentials = Depends(HTT
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return await updateTouristFood()
+        return updateTouristFood()
 
-async def updateTouristFood():
+def updateTouristFood():
         collection = MongoDB.getCollection("traffic_hero","tourism_tourist_food")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant?%24format=JSON" # 取得資料來源網址
@@ -31,7 +31,7 @@ async def updateTouristFood():
 
                 documents = []
                 for d in data:
-                        d["Weather"] = await Weather.getWeather(d['Position']['PositionLon'],d['Position']['PositionLat'])
+                        d["Weather"] = Weather.getWeather(d['Position']['PositionLon'],d['Position']['PositionLat'])
                         if(d['Picture'].get('PictureUrl1') == None): # 處理無圖片的資料
                                 d['Picture']['PictureUrl1'] = 'https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png'
                         documents.append(d)
