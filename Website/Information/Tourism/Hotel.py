@@ -7,8 +7,8 @@ import Function.Weather as Weather
 
 router = APIRouter(tags=["5.觀光資訊(Website)"],prefix="/Website/Information/Tourism")
 
-@router.put("/TouristHotel",summary="【Update】觀光景點-全臺觀光景點飯店")
-async def updateTouristHotelAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+@router.put("/Tourism/Hotel",summary="【Update】觀光景點-全臺觀光景點飯店")
+async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         """
         一、資料來源: \n
                 1. 交通部運輸資料流通服務平臺(TDX) - 取得所有觀光旅宿資料
@@ -21,10 +21,10 @@ async def updateTouristHotelAPI(token: HTTPAuthorizationCredentials = Depends(HT
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateTouristHotel()
+        return updateHotel()
 
-def updateTouristHotel():
-        collection = MongoDB.getCollection("traffic_hero","tourism_tourist_hotel")
+def update():
+        collection = MongoDB.getCollection("traffic_hero","tourism_hotel")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Tourism/Hotel?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料

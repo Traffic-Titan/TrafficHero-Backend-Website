@@ -5,10 +5,10 @@ from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
 import Function.Weather as Weather
 
-router = APIRouter(tags=["5.觀光資訊(Website)"],prefix="/Website/Information/Tourism")
+router = APIRouter(tags=["5.觀光資訊(Website)"],prefix="/Website/Information")
 
-@router.put("/TouristActivity",summary="【Update】觀光景點-全臺觀光景點活動")
-async def updateTouristActivityAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+@router.put("/Tourism/Activity",summary="【Update】觀光景點-全臺觀光景點活動")
+async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         """
         一、資料來源: \n
                 1. 交通部運輸資料流通服務平臺(TDX) - 取得所有觀光活動資料
@@ -22,10 +22,10 @@ async def updateTouristActivityAPI(token: HTTPAuthorizationCredentials = Depends
         """
         
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateTouristActivity()
+        return update()
 
-def updateTouristActivity(): 
-    collection = MongoDB.getCollection("traffic_hero","tourism_tourist_activity")
+def update(): 
+    collection = MongoDB.getCollection("traffic_hero","tourism_activity")
     
     try:
         url = f"https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity?%24format=JSON" # 取得資料來源網址

@@ -1,6 +1,3 @@
-"""
-1. 目前設定為每次啟動時，會將資料庫清空，並重新抓取資料，以後必需按照來源狀況，設定更新資料的時間  
-"""
 from fastapi import FastAPI, Request
 from dotenv import load_dotenv
 from fastapi.responses import RedirectResponse
@@ -9,6 +6,7 @@ from Service.Database import MongoDBSingleton
 import Function.Time as Time
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime, timedelta
 
 # ---------------------------------------------------------------
 
@@ -257,12 +255,12 @@ from Website.Information.PublicTransport.TaiwanRailway import Station
 app.include_router(Station.router)
 
 # 5.觀光資訊(Website)
-from Website.Information.Tourism import TouristSpot,TouristHotel,TouristActivity,TouristFood,TouristParking
-app.include_router(TouristSpot.router)
-app.include_router(TouristHotel.router)
-app.include_router(TouristActivity.router)
-app.include_router(TouristFood.router)
-app.include_router(TouristParking.router)
+from Website.Information.Tourism import Spot, Hotel, Activity, Food, Parking
+app.include_router(Spot.router)
+app.include_router(Hotel.router)
+app.include_router(Activity.router)
+app.include_router(Food.router)
+app.include_router(Parking.router)
 
 # 排程更新TDX最新消息
 global count_updateTourismData
@@ -274,11 +272,11 @@ def updateTourismData():
     
     print(f"S: 更新TDX - 觀光資訊 - 第{count_updateTourismData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
     
-    TouristActivity.updateTouristActivity()
-    TouristFood.updateTouristFood()
-    TouristHotel.updateTouristHotel()
-    TouristParking.updateTouristParking()
-    TouristSpot.updateTouristSpot()
+    Activity.update()
+    Food.update()
+    Hotel.update()
+    Parking.update()
+    Spot.update()
     
     print(f"E: 更新TDX - 觀光資訊 - 第{count_updateTourismData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
@@ -293,44 +291,3 @@ app.include_router(API.router)
 app.include_router(Logo.router)
 
 # ---------------------------------------------------------------
-
-# #每天0點0分定時執行Function
-# def setInterval(function):
-#     #現在時間
-#     now_time = datetime.datetime.now()
-
-#     #明天時間
-#     next_time = now_time + datetime.timedelta(days=+1)
-#     next_year = next_time.date().year
-#     next_month = next_time.date().month
-#     next_day = next_time.date().day
-
-#     #獲取明天0點0分時間
-#     next_time = datetime.datetime.strptime(str(next_year)+"-"+str(next_month)+"-"+str(next_day)+" 00:00:00","%Y-%m-%d %H:%M:%S")
-
-#     #獲取距離明天0點0分的時間 , 單位時間"秒"
-#     timerStartTime = (next_time - now_time).total_seconds()
-
-#     timer = threading.Timer(timerStartTime,function)
-#     timer.start()
-    
-#檢查目前資料庫內的版本與最新的版本有沒有差異，若有的話，通知User更新
-# def CheckUpdate_SpeedEnforcement():
-#     #連接DataBase
-#     # 0715：MongoDB.getCollection()後面的Collection名稱沒辦法當變數
-#     Collection = MongoDB.getCollection("Speed_Enforcement")
-
-#     #讀取DataBase內的資料，並存進document
-#     document = []
-#     count = 0
-#     for info in Collection.find({}):
-#         document.append(info)
-#     #判斷Speed_Enforcement.getData()的經緯度 與 document的經緯度 有無相同。如果全部相同，count應為 2098
-#     for speedEnforcement in Speed_Enforcement.getData():
-#         for doc in document:
-#             if((speedEnforcement['Latitude'],speedEnforcement['Longitude']) == (doc['Latitude'],doc['Longitude'])):
-#                 count = count + 1
-#     if(count == 2098):
-#         print("資料同步")
-#     else:
-#         print("資料需要更新")
