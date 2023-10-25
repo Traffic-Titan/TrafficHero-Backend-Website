@@ -37,7 +37,7 @@ def updateParkingFee_SystemStatus():
     for d in data:
         process(d, test_data)
         
-    return {"Message": "更新成功"}
+    return {"message": "更新成功"}
 
 def process(d, test_data):
     area = d["area"]
