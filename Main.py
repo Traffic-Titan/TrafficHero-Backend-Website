@@ -265,7 +265,7 @@ def updateTourismData():
     
     print(f"E: 更新TDX - 觀光資訊 - 第{count_updateTourismData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateTourismData, 'interval', minutes = 1440) # 每天更新一次
+scheduler.add_job(updateTourismData, 'interval', minutes = 10)
 
 
 # ---------------------------------------------------------------

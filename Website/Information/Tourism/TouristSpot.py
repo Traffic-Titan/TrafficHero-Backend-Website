@@ -3,6 +3,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import Service.Token as Token
 from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
+import Function.Weather as Weather
 
 router = APIRouter(tags=["5.觀光資訊(Website)"],prefix="/Website/Information/Tourism")
 
@@ -20,21 +21,21 @@ async def updateTouristSpotAPI(token: HTTPAuthorizationCredentials = Depends(HTT
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateTouristSpot()
+        return await updateTouristSpot()
 
-def updateTouristSpot():
+async def updateTouristSpot():
         collection = MongoDB.getCollection("traffic_hero","tourism_tourist_spot")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料
 
-                # 處理無圖片的資料
                 for result in data:
-                        if(result['Picture'].get('PictureUrl1') == None):
+                        result["Weather"] = await Weather.getWeather(result['Position']['PositionLon'],result['Position']['PositionLat'])
+                        if(result['Picture'].get('PictureUrl1') == None): # 處理無圖片的資料
                                 result['Picture']['PictureUrl1'] = 'https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png'
                 
                 collection.drop() # 刪除該collection所有資料
-                collection.insert_many(data) # 將資料存入MongoDB
+                collection.insert_many(result) # 將資料存入MongoDB
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
