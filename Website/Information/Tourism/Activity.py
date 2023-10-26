@@ -22,9 +22,9 @@ async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()))
         """
         
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return update()
+        return await update()
 
-def update(): 
+async def update(): 
     collection = MongoDB.getCollection("traffic_hero","tourism_activity")
     
     try:
@@ -33,7 +33,7 @@ def update():
         
         documents = []
         for d in data:
-                d["Weather"] = Weather.getWeather(d['Position']['PositionLon'],d['Position']['PositionLat'])
+                d["Weather"] = await Weather.getWeather(d['Position']['PositionLon'],d['Position']['PositionLat'])
                 if(d['Picture'].get('PictureUrl1') == None): # 處理無圖片的資料
                      d['Picture']['PictureUrl1'] = 'https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png'
                 documents.append(d)

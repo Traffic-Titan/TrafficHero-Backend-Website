@@ -4,7 +4,7 @@ from fastapi.responses import RedirectResponse
 from api_analytics.fastapi import Analytics
 from Service.Database import MongoDBSingleton
 import Function.Time as Time
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta
 
@@ -34,8 +34,8 @@ app.add_middleware(
 )
 
 MongoDB = MongoDBSingleton()
-scheduler = BackgroundScheduler() # 排程器
-
+# scheduler = BackgroundScheduler() # 排程器
+scheduler = AsyncIOScheduler()
 # ---------------------------------------------------------------
 
 @app.on_event("startup")
@@ -255,32 +255,32 @@ from Website.Information.PublicTransport.TaiwanRailway import Station
 app.include_router(Station.router)
 
 # 5.觀光資訊(Website)
-from Website.Information.Tourism import Spot, Hotel, Activity, Food, Parking
-app.include_router(Spot.router)
-app.include_router(Hotel.router)
+from Website.Information.Tourism import Activity, Hotel, Parking, Restaurant, ScenicSpot
 app.include_router(Activity.router)
-app.include_router(Food.router)
+app.include_router(Hotel.router)
 app.include_router(Parking.router)
+app.include_router(Restaurant.router)
+app.include_router(ScenicSpot.router)
 
 # 排程更新TDX最新消息
 global count_updateTourismData
 count_updateTourismData = 0
 
-def updateTourismData():
+async def updateTourismData():
     global count_updateTourismData
     count_updateTourismData += 1
     
     print(f"S: 更新TDX - 觀光資訊 - 第{count_updateTourismData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
     
-    Activity.update()
-    Food.update()
-    Hotel.update()
-    Parking.update()
-    Spot.update()
+    await Activity.update()
+    await Hotel.update()
+    await Parking.update()
+    await Restaurant.update()
+    await ScenicSpot.update()
     
     print(f"E: 更新TDX - 觀光資訊 - 第{count_updateTourismData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateTourismData, 'interval', minutes = 10)
+scheduler.add_job(updateTourismData, 'interval', minutes = 0.1)
 
 
 # ---------------------------------------------------------------
