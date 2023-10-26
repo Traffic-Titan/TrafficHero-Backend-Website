@@ -4,7 +4,7 @@ import Service.Token as Token
 from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
 
-router = APIRouter(tags=["5.觀光資訊(Website)"],prefix="/Website/Information/Tourism")
+router = APIRouter(tags=["5.觀光資訊(Website)"],prefix="/Website/Information")
 
 @router.put("/Tourism/Parking",summary="【Update】觀光景點-全臺觀光景點停車場資料")
 async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -20,9 +20,9 @@ async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()))
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return update()
+        return await update()
 
-def update():
+async def update():
         collection = MongoDB.getCollection("traffic_hero","tourism_parkinglot")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/Tourism?%24format=JSON" # 取得資料來源網址

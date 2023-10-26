@@ -5,7 +5,7 @@ from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
 import Function.Weather as Weather
 
-router = APIRouter(tags=["5.觀光資訊(Website)"],prefix="/Website/Information/Tourism")
+router = APIRouter(tags=["5.觀光資訊(Website)"],prefix="/Website/Information")
 
 @router.put("/Tourism/Hotel",summary="【Update】觀光景點-全臺觀光景點飯店")
 async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -21,9 +21,9 @@ async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()))
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateHotel()
+        return await update()
 
-def update():
+async def update():
         collection = MongoDB.getCollection("traffic_hero","tourism_hotel")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Tourism/Hotel?%24format=JSON" # 取得資料來源網址
@@ -31,7 +31,7 @@ def update():
 
                 documents = []
                 for d in data:
-                        d["Weather"] = Weather.getWeather(d['Position']['PositionLon'],d['Position']['PositionLat'])
+                        d["Weather"] = await Weather.getWeather(d['Position']['PositionLon'],d['Position']['PositionLat'])
                         if(d['Picture'].get('PictureUrl1') == None): # 處理無圖片的資料
                                 d['Picture']['PictureUrl1'] = 'https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png'
                         documents.append(d)
