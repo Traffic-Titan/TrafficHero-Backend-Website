@@ -31,9 +31,58 @@ async def update():
 
                 documents = []
                 for d in data:
-                        d["Weather"] = await Weather.getWeather(d['Position']['PositionLon'],d['Position']['PositionLat'])
-                        if(d['Picture'].get('PictureUrl1') == None): # 處理無圖片的資料
-                                d['Picture']['PictureUrl1'] = 'https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png'
+                        d["id"] = d.pop("ScenicSpotID")
+                        d["name"] = d.pop("ScenicSpotName")
+                        d["description_detail"] = d.pop("DescriptionDetail") if d.get("DescriptionDetail") != None else ""
+                        d["description"] = d.pop("Description") if d.get("Description") != None else ""
+                        d["phone"] = d.pop("Phone") if d.get("Phone") != None else ""
+                        d["address"] = d.pop("Address") if d.get("Address") != None else ""
+                        d["zip_code"] = d.pop("ZipCode") if d.get("ZipCode") != None else ""
+                        d["travel_info"] = d.pop("TravelInfo") if d.get("TravelInfo") != None else ""
+                        d["open_time"] = d.pop("OpenTime") if d.get("OpenTime") != None else ""
+                        
+                        if "Picture" in d:
+                                picture_urls = []
+                                for i in range(1, 4):
+                                        key = f"PictureUrl{i}"
+                                        if key in d["Picture"]:
+                                                picture_urls.append(d["Picture"][key])
+                                d["picture"] = picture_urls if len(picture_urls) > 0 else ["https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png"]
+                                del d["Picture"]
+                        
+                        d["map_url"] = d.pop("MapUrl") if d.get("MapUrl") != None else ""
+                        
+                        if "Position" in d:
+                                d["position"] = {
+                                        "longitude": d["Position"]["PositionLon"],
+                                        "latitude": d["Position"]["PositionLat"]
+                                }
+                                del d["Position"]
+                        
+                        d["class1"] = d.pop("Class1") if d.get("Class1") != None else ""
+                        d["class2"] = d.pop("Class2") if d.get("Class2") != None else ""
+                        d["class3"] = d.pop("Class3") if d.get("Class3") != None else ""
+                        d["level"] = d.pop("Level") if d.get("Level") != None else ""
+                        d["website_url"] = d.pop("WebsiteUrl") if d.get("WebsiteUrl") != None else ""
+                        d["parking_info"] = d.pop("ParkingInfo") if d.get("ParkingInfo") != None else ""
+                        
+                        if "ParkingPosition" in d:
+                                if len(d["ParkingPosition"]) > 0:
+                                        d["parking_position"] = {
+                                                "longitude": d["ParkingPosition"]["PositionLon"],
+                                                "latitude": d["ParkingPosition"]["PositionLat"]
+                                        }
+                                del d["ParkingPosition"]
+                        
+                        d["ticket_info"] = d.pop("TicketInfo") if d.get("TicketInfo") != None else ""
+                        d["remarks"] = d.pop("Remarks") if d.get("Remarks") != None else ""
+                        d["keyword"] = d.pop("Keyword") if d.get("Keyword") != None else ""
+                        d["city"] = d.pop("City") if d.get("City") != None else ""
+                        d["src_update_time"] = d.pop("SrcUpdateTime") if d.get("SrcUpdateTime") != None else ""
+                        d["update_time"] = d.pop("UpdateTime") if d.get("UpdateTime") != None else ""
+                
+                        d["weather"] = await Weather.getWeather(d["position"]["longitude"],d["position"]["latitude"])
+                        
                         documents.append(d)
                 
                 collection.drop() # 刪除該collection所有資料
