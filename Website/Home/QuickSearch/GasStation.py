@@ -45,6 +45,27 @@ def updateGasStationList():
                                 station_data = {}
                                 for element in table:
                                         station_data[element.tag] = element.text
+                                        
+                                station_data['營業中'] = True if table.find("營業中").text == "1" else False
+                                station_data['國道高速公路'] = True if table.find("國道高速公路").text == "1" else False
+                                station_data['無鉛92'] = True if table.find("無鉛92").text == "1" else False
+                                station_data['無鉛95'] = True if table.find("無鉛95").text == "1" else False
+                                station_data['無鉛98'] = True if table.find("無鉛98").text == "1" else False
+                                station_data['酒精汽油'] = True if table.find("酒精汽油").text == "1" else False
+                                station_data['煤油'] = True if table.find("煤油").text == "1" else False
+                                station_data['超柴'] = True if table.find("超柴").text == "1" else False
+                                station_data['會員卡'] = True if table.find("會員卡").text == "1" else False
+                                station_data['刷卡自助'] = True if table.find("刷卡自助").text == "1" else False
+                                station_data['自助柴油站'] = True if table.find("自助柴油站").text == "1" else False
+                                station_data['電子發票'] = True if table.find("電子發票").text == "1" else False
+                                station_data['悠遊卡'] = True if table.find("悠遊卡").text == "1" else False
+                                station_data['一卡通'] = True if table.find("一卡通").text == "1" else False
+                                station_data['HappyCash'] = True if table.find("HappyCash").text == "1" else False
+                                
+                                station_data["position"] = {"longitude": float(station_data["經度"]), "latitude": float(station_data["緯度"])}
+                                del station_data["經度"]
+                                del station_data["緯度"]
+                                
                                 station_data['_id'] = ObjectId()
                                 documents.append(station_data)
 
