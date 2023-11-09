@@ -101,13 +101,13 @@ app.include_router(ParkingFee.router)
 global count_updateParkingFee_SystemStatus
 count_updateParkingFee_SystemStatus = 0
 
-def updateParkingFee_SystemStatus():
+async def updateParkingFee_SystemStatus():
     global count_updateParkingFee_SystemStatus
     count_updateParkingFee_SystemStatus += 1
     
     print(f"S: 更新各縣市路邊停車費 - 系統狀態 - 第{count_updateParkingFee_SystemStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
     
-    ParkingFee.updateParkingFee_SystemStatus()
+    await ParkingFee.updateParkingFee_SystemStatus()
     
     print(f"E: 更新各縣市路邊停車費 - 系統狀態 - 第{count_updateParkingFee_SystemStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
@@ -122,13 +122,13 @@ app.include_router(WeatherStationList.router)
 global count_updateWeatherStation
 count_updateWeatherStation = 0
 
-def updateWeatherStation():
+async def updateWeatherStation():
     global count_updateWeatherStation
     count_updateWeatherStation += 1
     
     print(f"S: 更新中央氣象署 - 無人氣象測站資料 - 第{count_updateWeatherStation}次 - {Time.format(str(Time.getCurrentDatetime()))}")
     
-    WeatherStation.updateStation()
+    await WeatherStation.updateStation()
     
     print(f"E: 更新中央氣象署 - 無人氣象測站資料 - 第{count_updateWeatherStation}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
@@ -138,13 +138,13 @@ scheduler.add_job(updateWeatherStation, 'interval', minutes = 10)
 global count_updateWeatherStationList
 count_updateWeatherStationList = 0
 
-def updateWeatherStationList():
+async def updateWeatherStationList():
     global count_updateWeatherStationList
     count_updateWeatherStationList += 1
     
     print(f"S: 更新中央氣象署 - 無人氣象測站清單 - 第{count_updateWeatherStationList}次 - {Time.format(str(Time.getCurrentDatetime()))}")
     
-    WeatherStationList.updateStationList()
+    await WeatherStationList.updateStationList()
     
     print(f"E: 更新中央氣象署 - 無人氣象測站清單 - 第{count_updateWeatherStationList}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
@@ -201,23 +201,23 @@ app.include_router(News_Link.router)
 global count_updateNews
 count_updateNews = 0
 
-def updateNews():
+async def updateNews():
     global count_updateNews
     count_updateNews += 1
     
     print(f"S: 更新TDX - 最新消息 - 第{count_updateNews}次 - {Time.format(str(Time.getCurrentDatetime()))}")
     
-    News_AlishanForestRailway.updateNews()
-    News_Bus.updateNews()
-    News_Freeway.updateNews()
-    News_IntercityBus.updateNews()
-    News_LocalRoad.updateNews()
-    News_MRT.updateNews()
-    News_ProvincialHighway.updateNews()
-    News_PublicBicycle.updateNews()
-    News_TaiwanHighSpeedRail.updateNews()
-    News_TaiwanRailway.updateNews()
-    News_TaiwanTouristShuttle.updateNews()
+    await News_AlishanForestRailway.updateNews()
+    await News_Bus.updateNews()
+    await News_Freeway.updateNews()
+    await News_IntercityBus.updateNews()
+    await News_LocalRoad.updateNews()
+    await News_MRT.updateNews()
+    await News_ProvincialHighway.updateNews()
+    await News_PublicBicycle.updateNews()
+    await News_TaiwanHighSpeedRail.updateNews()
+    await News_TaiwanRailway.updateNews()
+    await News_TaiwanTouristShuttle.updateNews()
     
     print(f"E: 更新TDX - 最新消息 - 第{count_updateNews}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
@@ -237,7 +237,6 @@ app.include_router(RoadInfo_Road_Construction.router)
 app.include_router(RoadInfo_Accident.router)
 app.include_router(RoadInfo_Trafficjam.router)
 app.include_router(RoadInfo_Traffic_Control.router)
-
 
 from Website.Information.Road.Parking.OnStreet import Taichung
 app.include_router(Taichung.router)

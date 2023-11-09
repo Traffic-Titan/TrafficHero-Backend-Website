@@ -28,9 +28,9 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    return updateNews()
+    return await updateNews()
 
-def updateNews():   
+async def updateNews():   
     try:
         # Initial
         context = {}
@@ -47,7 +47,7 @@ def updateNews():
             url = f'https://www.youbike.com.tw/region/{area}/news/status/'
             response = urllib.request.urlopen(url)
             soup = BeautifulSoup(response.read().decode('utf-8'),'html.parser')
-            city_data = processData(area,soup)
+            city_data = await processData(area,soup)
             context_return.extend(city_data)
 
         collection.drop() # 刪除該collection所有資料
@@ -57,7 +57,7 @@ def updateNews():
 
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
-def processData(area, soup): # 尚未完成縣市分類
+async def processData(area, soup): # 尚未完成縣市分類
     #  Initial
     title_array = []
     url_array = []

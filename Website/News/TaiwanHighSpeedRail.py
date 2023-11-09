@@ -32,9 +32,9 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    return updateNews()
+    return await updateNews()
 
-def updateNews():  
+async def updateNews():  
     try:
         url = Link.get("traffic_hero", "news_source", "taiwan_high_speed_rail", "All") # 取得資料來源網址
         data = TDX.getData(url) # 取得資料

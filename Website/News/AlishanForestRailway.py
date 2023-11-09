@@ -25,9 +25,9 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    return updateNews()
+    return await updateNews()
 
-def updateNews():
+async def updateNews():
     try:
         url = Link.get("traffic_hero", "news_source", "alishan_forest_railway", "All") # 取得資料來源網址
         data = TDX.getData(url) # 取得資料
@@ -39,7 +39,7 @@ def updateNews():
                 "area": "ChiayiCity",
                 "news_id": d['NewsID'],
                 "title": d['Title'],
-                "news_category": numberToText(d['NewsCategory']),
+                "news_category": await numberToText(d['NewsCategory']),
                 "description": d['Description'],
                 "news_url": d['NewsURL'] if 'NewsURL' in d else "",
                 "update_time": Time.format(d['UpdateTime']),
@@ -51,7 +51,7 @@ def updateNews():
                 "area": "ChiayiCounty",
                 "news_id": d['NewsID'],
                 "title": d['Title'],
-                "news_category": numberToText(d['NewsCategory']),
+                "news_category": await numberToText(d['NewsCategory']),
                 "description": d['Description'],
                 "news_url": d['NewsURL'] if 'NewsURL' in d else "",
                 "update_time": Time.format(d['UpdateTime']),
@@ -63,7 +63,7 @@ def updateNews():
                 "area": "NantouCounty",
                 "news_id": d['NewsID'],
                 "title": d['Title'],
-                "news_category": numberToText(d['NewsCategory']),
+                "news_category": await numberToText(d['NewsCategory']),
                 "description": d['Description'],
                 "news_url": d['NewsURL'] if 'NewsURL' in d else "",
                 "update_time": Time.format(d['UpdateTime']),
@@ -78,7 +78,7 @@ def updateNews():
     
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
-def numberToText(number : int):
+async def numberToText(number : int):
     match number:
         case 1:
             return "最新消息"

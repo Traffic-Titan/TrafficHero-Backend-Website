@@ -52,9 +52,9 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    return updateNews()
+    return await updateNews()
 
-def updateNews():
+async def updateNews():
     try:
         url = Link.get("traffic_hero", "news_source", "provincial_highway", "All")
         data = TDX.getData(url)
@@ -75,7 +75,7 @@ def updateNews():
                         "area": Area.chineseToEnglish(area.get("CityName")),
                         "news_id": d['NewsID'],
                         "title": d['Title'],
-                        "news_category": numberToText(d['NewsCategory']),
+                        "news_category": await numberToText(d['NewsCategory']),
                         "description": d['Description'],
                         "news_url": d['NewsURL'] if 'NewsURL' in d else "",
                         "update_time": Time.format(d['UpdateTime']),
@@ -91,7 +91,7 @@ def updateNews():
                         "area": Area.chineseToEnglish(area),
                         "news_id": d['NewsID'],
                         "title": d['Title'],
-                        "news_category": numberToText(d['NewsCategory']),
+                        "news_category": await numberToText(d['NewsCategory']),
                         "description": d['Description'],
                         "news_url": d['NewsURL'] if 'NewsURL' in d else "",
                         "update_time": Time.format(d['UpdateTime']),
@@ -105,7 +105,7 @@ def updateNews():
                     "area": "All",
                     "news_id": d['NewsID'],
                     "title": d['Title'],
-                    "news_category": numberToText(d['NewsCategory']),
+                    "news_category": await numberToText(d['NewsCategory']),
                     "description": d['Description'],
                     "news_url": d['NewsURL'] if 'NewsURL' in d else "",
                     "update_time": Time.format(d['UpdateTime']),
@@ -123,7 +123,7 @@ def updateNews():
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
 
-def numberToText(number : int):
+async def numberToText(number : int):
     match number:
         case 1:
             return "交管措施"

@@ -28,18 +28,17 @@ async def updateParkingFee_SystemStatusAPI(token: HTTPAuthorizationCredentials =
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    return updateParkingFee_SystemStatus()
+    return await updateParkingFee_SystemStatus()
     
-    
-def updateParkingFee_SystemStatus():
+async def updateParkingFee_SystemStatus():
     test_data = list(collection.find({"area": "test"},{"_id":0}))[0] # 取得資料庫內容
     data = list(collection.find({},{"_id":0}))
     for d in data:
-        process(d, test_data)
+        await process(d, test_data)
         
     return {"message": "更新成功"}
 
-def process(d, test_data):
+async def process(d, test_data):
     area = d["area"]
     
     try:
