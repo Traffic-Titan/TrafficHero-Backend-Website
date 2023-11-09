@@ -25,9 +25,9 @@ async def updateStationAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBea
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
         
-        return updateStation()
+        return await updateStation()
         
-def updateStation():
+async def updateStation():
         # 中央氣象署API Key
         load_dotenv()
         CWA_API_Key = os.getenv('CWA_API_Key') 

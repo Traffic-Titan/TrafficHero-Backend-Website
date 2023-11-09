@@ -25,9 +25,9 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    return updateNews()
+    return await updateNews()
 
-def updateNews():
+async def updateNews():
     try:
         base_url = 'https://1968.freeway.gov.tw/n_whatsup?page=' # 網址
         total_pages = 2  # 總頁數
@@ -35,7 +35,7 @@ def updateNews():
         all_data = []
         for page in range(1, total_pages + 1):
             page_url = base_url + str(page)
-            all_data.extend(processData(page_url))
+            all_data.extend(await processData(page_url))
 
         collection.drop() # 刪除該collection所有資料
         collection.insert_many(all_data)  # 將資料存入MongoDB
@@ -44,7 +44,7 @@ def updateNews():
 
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
-def processData(url):
+async def processData(url):
     try:
         response = urllib.request.urlopen(url) # 取得網頁原始碼
         soup = BeautifulSoup(response.read().decode('utf-8'), 'html.parser') # 解析HTML

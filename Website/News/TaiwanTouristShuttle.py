@@ -35,15 +35,15 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    return updateNews()
+    return await updateNews()
     
-def updateNews():   
+async def updateNews():   
     for area in Area.english: # 依照區域更新資料
-        dataToDatabase(area)
+        await dataToDatabase(area)
 
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
     
-def dataToDatabase(area: str):
+async def dataToDatabase(area: str):
     try:
         url = Link.get("traffic_hero", "news_source", "taiwan_tourist_shuttle", "All") # 取得資料來源網址
         data = TDX.getData(url) # 取得資料

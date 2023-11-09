@@ -33,16 +33,16 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    return updateNews()
+    return await updateNews()
 
-def updateNews():
-    dataToDatabase("TaipeiCity") # 臺北捷運
-    dataToDatabase("TaoyuanCity") # 桃園捷運
-    dataToDatabase("KaohsiungCity") # 高雄捷運
+async def updateNews():
+    await dataToDatabase("TaipeiCity") # 臺北捷運
+    await dataToDatabase("TaoyuanCity") # 桃園捷運
+    await dataToDatabase("KaohsiungCity") # 高雄捷運
             
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
-def dataToDatabase(area: str):
+async def dataToDatabase(area: str):
     try:
         url = Link.get("traffic_hero", "news_source", "mrt", area) # 取得資料來源網址
         data = TDX.getData(url)
@@ -54,7 +54,7 @@ def dataToDatabase(area: str):
                 "area": area,
                 "news_id": d['NewsID'],
                 "title": d['Title'],
-                "news_category": numberToText(d['NewsCategory']),
+                "news_category": await numberToText(d['NewsCategory']),
                 "description": d['Description'],
                 "news_url": d['NewsURL'] if 'NewsURL' in d else "",
                 "update_time": Time.format(d['UpdateTime']),
@@ -67,7 +67,7 @@ def dataToDatabase(area: str):
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-def numberToText(number : int):
+async def numberToText(number : int):
     match number:
         case 1:
             return "最新消息"
