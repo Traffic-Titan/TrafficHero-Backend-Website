@@ -7,6 +7,7 @@ from shapely.geometry import Point
 from pymongo import GEO2D
 from bson.son import SON
 from pymongo import GEOSPHERE
+import re
 
 router = APIRouter(tags=["1.首頁(Website)"],prefix="/Website/Home")
 
@@ -24,9 +25,9 @@ async def updateRoadCondition_Freeway_CMS_ListAPI(token: HTTPAuthorizationCreden
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition_Freeway_CMS_List()
+        return await updateRoadCondition_Freeway_CMS_List()
 
-def updateRoadCondition_Freeway_CMS_List():
+async def updateRoadCondition_Freeway_CMS_List():
         collection = MongoDB.getCollection("traffic_hero","road_condition_freeway_cms_list")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/CMS/Freeway?%24format=JSON" # 取得資料來源網址
@@ -53,9 +54,9 @@ async def updateRoadCondition_Freeway_CMS_ContentAPI(token: HTTPAuthorizationCre
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition_Freeway_CMS_Content()
+        return await updateRoadCondition_Freeway_CMS_Content()
 
-def updateRoadCondition_Freeway_CMS_Content():
+async def updateRoadCondition_Freeway_CMS_Content():
         collection = MongoDB.getCollection("traffic_hero","road_condition_freeway_cms_content")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/Live/CMS/Freeway?%24format=JSON" # 取得資料來源網址
@@ -65,7 +66,7 @@ def updateRoadCondition_Freeway_CMS_Content():
                 for d in data.get("CMSLives"):
                         if d.get("MessageStatus") == 1:
                                 cms_id = d.get("CMSID")
-                                messages = [message["Text"] for message in d["Messages"]]
+                                messages = [await process(message["Text"]) for message in d["Messages"]]
                                 documents.append({
                                         "CMSID": cms_id,
                                         "Messages": messages
@@ -77,6 +78,10 @@ def updateRoadCondition_Freeway_CMS_Content():
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
         return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+
+async def process(message: str): # 將(圖)前面的字串刪除
+        result = re.sub(r'.*\(圖\)', '', message)
+        return result
 
 @router.put("/RoadCondition/Freeway",summary="【Update】附近路況-高速公路")
 async def updateRoadCondition_FreewayAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -91,9 +96,9 @@ async def updateRoadCondition_FreewayAPI(token: HTTPAuthorizationCredentials = D
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition_Freeway()
+        return await updateRoadCondition_Freeway()
 
-def updateRoadCondition_Freeway():
+async def updateRoadCondition_Freeway():
     collection = MongoDB.getCollection("traffic_hero", "road_condition_freeway")
     collection_cms_list = MongoDB.getCollection("traffic_hero", "road_condition_freeway_cms_list")
     collection_cms_content = MongoDB.getCollection("traffic_hero", "road_condition_freeway_cms_content")

@@ -150,11 +150,42 @@ async def updateWeatherStationList():
 
 scheduler.add_job(updateWeatherStationList, 'interval', minutes = 1440) # 每天更新一次
 
-from Website.Home.RoadCondition import Main, ProvincialHighway, Freeway, LocalRoad
-app.include_router(Main.router)
-app.include_router(ProvincialHighway.router)
-app.include_router(Freeway.router)
-app.include_router(LocalRoad.router)
+from Website.Home.RoadCondition import Main as RoadCondition_Main 
+from Website.Home.RoadCondition import ProvincialHighway as RoadCondition_ProvincialHighway
+from Website.Home.RoadCondition import Freeway as RoadCondition_Freeway
+from Website.Home.RoadCondition import LocalRoad as RoadCondition_LocalRoad
+
+
+app.include_router(RoadCondition_Main.router)
+app.include_router(RoadCondition_ProvincialHighway.router)
+app.include_router(RoadCondition_Freeway.router)
+app.include_router(RoadCondition_LocalRoad.router)
+
+# 排程更新 - 首頁 - 路況速報
+global count_updateRoadCondition
+count_updateRoadCondition = 0
+
+async def updateRoadCondition():
+    global count_updateRoadCondition
+    count_updateRoadCondition += 1
+    
+    print(f"S: 更新CMS路況速報 - 第{count_updateRoadCondition}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    await RoadCondition_Freeway.updateRoadCondition_Freeway_CMS_List()
+    await RoadCondition_Freeway.updateRoadCondition_Freeway_CMS_Content()
+    await RoadCondition_Freeway.updateRoadCondition_Freeway()
+    await RoadCondition_ProvincialHighway.updateRoadCondition_ProvincialHighway_CMS_List()
+    await RoadCondition_ProvincialHighway.updateRoadCondition_ProvincialHighway_CMS_Content()
+    await RoadCondition_ProvincialHighway.updateRoadCondition_ProvincialHighway()
+    await RoadCondition_LocalRoad.updateRoadCondition_LocalRoad_CMS_List()
+    await RoadCondition_LocalRoad.updateRoadCondition_LocalRoad_CMS_Content()
+    await RoadCondition_LocalRoad.updateRoadCondition_LocalRoad()
+    await RoadCondition_Main.updateRoadCondition()
+    
+    print(f"E: 更新CMS路況速報 - 第{count_updateRoadCondition}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(updateRoadCondition, 'interval', minutes = 5) # 每天更新一次
+
 
 from Website.Home.QuickSearch import GasStation, ConvenientStore
 app.include_router(GasStation.router)

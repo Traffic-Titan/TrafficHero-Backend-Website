@@ -23,9 +23,9 @@ async def updateRoadConditionAPI(token: HTTPAuthorizationCredentials = Depends(H
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition()
+        return await updateRoadCondition()
 
-def updateRoadCondition():
+async def updateRoadCondition():
         collection = MongoDB.getCollection("traffic_hero","road_condition_freeway")
         try:
                 documents = []

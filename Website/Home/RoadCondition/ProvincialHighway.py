@@ -7,6 +7,7 @@ from shapely.geometry import Point
 from pymongo import GEO2D
 from bson.son import SON
 from pymongo import GEOSPHERE
+import re
 
 router = APIRouter(tags=["1.首頁(Website)"],prefix="/Website/Home")
 
@@ -24,16 +25,16 @@ async def updateRoadCondition_ProvincialHighway_CMS_ListAPI(token: HTTPAuthoriza
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition_ProvincialHighway_CMS_List()
+        return await updateRoadCondition_ProvincialHighway_CMS_List()
 
-def updateRoadCondition_ProvincialHighway_CMS_List():
+async def updateRoadCondition_ProvincialHighway_CMS_List():
         collection = MongoDB.getCollection("traffic_hero","road_condition_provincial_highway_cms_list")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/CMS/Highway?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料
 
                 collection.drop() # 刪除該collection所有資料
-                collection.insert_many(data) # 將資料存入MongoDB
+                collection.insert_many(data.get("CMSs")) # 將資料存入MongoDB
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
@@ -53,9 +54,9 @@ async def updateRoadCondition_ProvincialHighway_CMS_ContentAPI(token: HTTPAuthor
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition_ProvincialHighway_CMS_Content()
+        return await updateRoadCondition_ProvincialHighway_CMS_Content()
 
-def updateRoadCondition_ProvincialHighway_CMS_Content():
+async def updateRoadCondition_ProvincialHighway_CMS_Content():
         collection = MongoDB.getCollection("traffic_hero","road_condition_provincial_highway_cms_content")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/Live/CMS/Highway?%24format=JSON" # 取得資料來源網址
@@ -65,7 +66,7 @@ def updateRoadCondition_ProvincialHighway_CMS_Content():
                 for d in data.get("CMSLives"):
                         if d.get("MessageStatus") == 1:
                                 cms_id = d.get("CMSID")
-                                messages = [message["Text"] for message in d["Messages"]]
+                                messages = [await process(message["Text"]) for message in d["Messages"]]
                                 documents.append({
                                         "CMSID": cms_id,
                                         "Messages": messages
@@ -77,6 +78,10 @@ def updateRoadCondition_ProvincialHighway_CMS_Content():
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
         return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+
+async def process(message: str): # 將(圖)前面的字串刪除
+        result = re.sub(r'.*\(圖\)', '', message)
+        return result
 
 @router.put("/RoadCondition/ProvincialHighway",summary="【Update】附近路況-省道")
 async def updateRoadCondition_ProvincialHighwayAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -91,9 +96,9 @@ async def updateRoadCondition_ProvincialHighwayAPI(token: HTTPAuthorizationCrede
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition_ProvincialHighway()
+        return await updateRoadCondition_ProvincialHighway()
 
-def updateRoadCondition_ProvincialHighway():
+async def updateRoadCondition_ProvincialHighway():
     collection = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway")
     collection_cms_list = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_list")
     collection_cms_content = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_content")
