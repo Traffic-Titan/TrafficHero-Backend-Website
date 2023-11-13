@@ -7,6 +7,7 @@ from shapely.geometry import Point
 from pymongo import GEO2D
 from bson.son import SON
 from pymongo import GEOSPHERE
+import re
 
 router = APIRouter(tags=["1.首頁(Website)"],prefix="/Website/Home")
 
@@ -24,9 +25,9 @@ async def updateRoadCondition_LocalRoad_CMS_ListAPI(token: HTTPAuthorizationCred
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition_LocalRoad_CMS_List()
+        return await updateRoadCondition_LocalRoad_CMS_List()
 
-def updateRoadCondition_LocalRoad_CMS_List():
+async def updateRoadCondition_LocalRoad_CMS_List():
         collection = MongoDB.getCollection("traffic_hero","road_condition_local_road_cms_list")
         try:
                 areas = ["Taipei","NewTaipei","Taoyuan","Taichung","Hsinchu","HsinchuCounty","MiaoliCounty","Taichung","Chiayi",'ChiayiCounty',"Tainan","Kaohsiung","PingtungCounty",'YilanCounty','ChanghuaCounty','NantouCounty','YunlinCounty','TaitungCounty']
@@ -57,9 +58,9 @@ async def updateRoadCondition_LocalRoad_CMS_ContentAPI(token: HTTPAuthorizationC
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition_LocalRoad_CMS_Content()
+        return await updateRoadCondition_LocalRoad_CMS_Content()
 
-def updateRoadCondition_LocalRoad_CMS_Content():
+async def updateRoadCondition_LocalRoad_CMS_Content():
         collection = MongoDB.getCollection("traffic_hero","road_condition_local_road_cms_content")
         try:
                 documents = []
@@ -71,7 +72,7 @@ def updateRoadCondition_LocalRoad_CMS_Content():
                         for d in data.get("CMSLives"):
                                 if d.get("MessageStatus") == 1:
                                         cms_id = d.get("CMSID")
-                                        messages = [message["Text"] for message in d["Messages"] if "text" in message and message["Text"] != ""]
+                                        messages = [await process(message["Text"]) for message in d["Messages"] if "text" in message and message["Text"] != ""]
                                         documents.append({
                                                 "CMSID": cms_id,
                                                 "Messages": messages
@@ -83,6 +84,10 @@ def updateRoadCondition_LocalRoad_CMS_Content():
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
         return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+
+async def process(message: str): # 將(圖)前面的字串刪除
+        result = re.sub(r'.*\(圖\)', '', message)
+        return result
 
 @router.put("/RoadCondition/LocalRoad",summary="【Update】附近路況-地區道路")
 async def updateRoadCondition_LocalRoadAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -97,9 +102,9 @@ async def updateRoadCondition_LocalRoadAPI(token: HTTPAuthorizationCredentials =
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateRoadCondition_LocalRoad()
+        return await updateRoadCondition_LocalRoad()
 
-def updateRoadCondition_LocalRoad():
+async def updateRoadCondition_LocalRoad():
     collection = MongoDB.getCollection("traffic_hero", "road_condition_local_road")
     collection_cms_list = MongoDB.getCollection("traffic_hero", "road_condition_local_road_cms_list")
     collection_cms_content = MongoDB.getCollection("traffic_hero", "road_condition_local_road_cms_content")
