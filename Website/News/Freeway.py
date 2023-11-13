@@ -30,7 +30,7 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
 async def updateNews():
     try:
         base_url = 'https://1968.freeway.gov.tw/n_whatsup?page=' # 網址
-        total_pages = 2  # 總頁數
+        total_pages = 10  # 總頁數
 
         all_data = []
         for page in range(1, total_pages + 1):
@@ -50,7 +50,7 @@ async def processData(url):
         soup = BeautifulSoup(response.read().decode('utf-8'), 'html.parser') # 解析HTML
     
         all_title = [title.text for title in soup.find_all('span', class_="wup_title_txt use_tri_icon")] # 取得所有標題
-        all_type = [type.text.strip() for type in soup.find_all('span', attrs={"class": ["wup_type tp_cons", "wup_type tp_rinfo", "wup_type tp_other"]})] # 取得所有類別
+        all_type = [type.text.strip() for type in soup.find_all('span', class_=lambda x: x and x.startswith('wup_type'))] # 取得所有類別
         all_url = [url.find('a').get('href') for url in soup.find_all('span', class_="wup_seemore")] # 取得所有連結
         all_update_time = [time.text for time in soup.find_all('span', class_="wup_time")] # 取得所有發布時間
 
