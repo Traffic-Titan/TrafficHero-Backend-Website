@@ -82,3 +82,5 @@ async def numberToText(number : int):
             return "施工"
         case 99:
             return "其他"
+        case _:
+            return "其他"
