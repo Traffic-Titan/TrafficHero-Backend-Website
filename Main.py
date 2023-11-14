@@ -95,6 +95,23 @@ app.include_router(Main.router)
 # 1.首頁(Website)
 from Website.Home import OperationalStatus, ParkingFee
 app.include_router(OperationalStatus.router)
+
+# 排程更新 - 大眾運輸 - 營運狀況
+global count_updateOperationalStatus
+count_updateOperationalStatus = 0
+
+async def updateOperationalStatus():
+    global count_updateOperationalStatus
+    count_updateOperationalStatus += 1
+    
+    print(f"S: 更新大眾運輸 - 營運狀態 - 第{count_updateOperationalStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    await OperationalStatus.update()
+    
+    print(f"E: 更新大眾運輸 - 營運狀態 - 第{count_updateOperationalStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(updateOperationalStatus, 'interval', minutes = 1)
+
 app.include_router(ParkingFee.router)
 
 # 排程更新 - 各縣市路邊停車費 - 系統狀態
@@ -155,7 +172,6 @@ from Website.Home.RoadCondition import ProvincialHighway as RoadCondition_Provin
 from Website.Home.RoadCondition import Freeway as RoadCondition_Freeway
 from Website.Home.RoadCondition import LocalRoad as RoadCondition_LocalRoad
 
-
 app.include_router(RoadCondition_Main.router)
 app.include_router(RoadCondition_ProvincialHighway.router)
 app.include_router(RoadCondition_Freeway.router)
@@ -185,7 +201,6 @@ async def updateRoadCondition():
     print(f"E: 更新CMS路況速報 - 第{count_updateRoadCondition}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
 scheduler.add_job(updateRoadCondition, 'interval', minutes = 5) # 每天更新一次
-
 
 from Website.Home.QuickSearch import GasStation, ConvenientStore
 app.include_router(GasStation.router)
