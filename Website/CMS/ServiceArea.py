@@ -80,15 +80,15 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                     }
                 ],
                 "voice": f"前方{result['service_name']}，目前還有{result['available']}格停車位，停車位{status}",
-                "position": {
+                "location": {
                     "longitude": "121.000000", # Demo
                     "latitude": "25.000000", # Demo
                 },
                 "direction": "string", # Demo
-                "distance": 2.5, # Demo
+                "distance": 2.5,
                 "priority": "1", # Demo
                 "start": datetime.now(),
-                "end": datetime.now() + timedelta(hours=10000), # Demo
+                "end": datetime.now() + timedelta(minutes = 10),
                 "active": True,
                 "id": "string"
                 }
@@ -107,15 +107,15 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                     }
                 ],
                 "voice": f"前方{result['service_name']}，停車位{status}",
-                "position": {
+                "location": {
                     "longitude": "121.000000", # Demo
                     "latitude": "25.000000", # Demo
                 },
                 "direction": "string", # Demo
-                "distance": 2.5, # Demo
+                "distance": 2.5,
                 "priority": "1", # Demo
                 "start": datetime.now(),
-                "end": datetime.now() + timedelta(hours=10000), # Demo
+                "end": datetime.now() + timedelta(minutes = 10),
                 "active": True,
                 "id": "string"
                 }
