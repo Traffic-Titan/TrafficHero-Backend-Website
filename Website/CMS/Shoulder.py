@@ -8,7 +8,7 @@ from PIL import Image
 import os
 from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
-import Website.CMS.CRUD as CMS
+import Website.CMS.MainContent as CMS_MainContent
 from datetime import datetime, timedelta
 import requests
 

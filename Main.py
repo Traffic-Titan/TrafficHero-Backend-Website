@@ -270,10 +270,71 @@ async def updateNews():
 scheduler.add_job(updateNews, 'interval', minutes = 5)
 
 # 3.即時訊息推播(Website)
-from Website.CMS import CRUD, ServiceArea, Shoulder
-app.include_router(CRUD.router)
+from Website.CMS import MainContent, Sidebar, ServiceArea, Shoulder
+app.include_router(MainContent.router)
+app.include_router(Sidebar.router)
+
 app.include_router(ServiceArea.router)
 app.include_router(Shoulder.router)
+
+# 排程更新 - 高速公路服務區停車位狀態
+global count_updateServiceArea_ParkingStatus
+count_updateServiceArea_ParkingStatus = 0
+
+async def updateServiceArea_ParkingStatus():
+    global count_updateServiceArea_ParkingStatus
+    count_updateServiceArea_ParkingStatus += 1
+    
+    print(f"S: 更新1968 - 高速公路服務區停車位狀態 - 第{count_updateServiceArea_ParkingStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    await ServiceArea.updateParkingStatus()
+    
+    print(f"E: 更新1968 - 高速公路服務區停車位狀態 - 第{count_updateServiceArea_ParkingStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(updateServiceArea_ParkingStatus, 'interval', minutes = 10)
+
+# 排程更新 - 高速公路服務區停車場資料
+global count_updateServiceAreaData
+count_updateServiceAreaData = 0
+
+async def updateServiceAreaData():
+    global count_updateServiceAreaData
+    count_updateServiceAreaData += 1
+    
+    print(f"S: 更新1968 -高速公路服務區停車場資料 - 第{count_updateServiceAreaData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    await ServiceArea.updateServiceAreaData()
+    
+    print(f"E: 更新1968 - 高速公路服務區停車場資料 - 第{count_updateServiceAreaData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(updateServiceAreaData, 'interval', days = 1)
+
+# 排程更新 - 即時訊息推播訊息 - 推播有效性判斷
+global count_cms_effectiveness
+count_cms_effectiveness = 0
+
+async def update_CMS_Effectiveness():
+    global count_cms_effectiveness
+    count_cms_effectiveness += 1
+    
+    print(f"S: 更新即時訊息推播訊息 - 推播有效性判斷 - 第{count_cms_effectiveness}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+    
+    for i in ["cms_main_car","cms_main_scooter","cms_sidebar_car","cms_sidebar_scooter"]:
+        collection = MongoDB.getCollection("traffic_hero",i)
+        # 將所有的document都判斷一次有效性(若訊息已超過目前時間，則將active設定為false)
+        documents = collection.find({"active": True})
+        
+        # 轉換時區(待模組化)
+        import pytz
+        taipei_timezone = pytz.timezone('Asia/Taipei')
+        current_time = datetime.now(taipei_timezone)
+
+        for document in documents:
+            collection.update_many({'end': {'$lt': current_time}}, {'$set': {'active': False}})
+    
+    print(f"E: 更新即時訊息推播訊息 - 推播有效性判斷 - 第{count_cms_effectiveness}次 - {Time.format(str(Time.getCurrentDatetime()))}")
+
+scheduler.add_job(update_CMS_Effectiveness, 'interval', minutes = 10)
 
 # 4-1.道路資訊(Website)
 from Website.Information.Road import Main,CityCarPark_ParkingNum,CityCarPark_ParkingInfo,RoadInfo_Road_Construction,RoadInfo_Accident,RoadInfo_Trafficjam,RoadInfo_Traffic_Control

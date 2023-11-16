@@ -8,14 +8,14 @@ from PIL import Image
 import os
 from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
-import Website.CMS.CRUD as CMS
+import Website.CMS.MainContent as CMS_MainContent
 from datetime import datetime, timedelta
 import requests
 
 router = APIRouter(tags=["3.即時訊息推播(Website)"],prefix="/Website/CMS")
 
 @router.put("/ServiceArea/ParkingStatus", summary="【Update】即時訊息推播-高速公路服務區停車位狀態")
-async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+async def getServiceArea_ParkingStatusAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
     一、資料來源: \n
             1. 即時路況 - 交通部高速公路局
@@ -30,7 +30,9 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    
+    return await getServiceArea_ParkingStatus()
+
+async def getServiceArea_ParkingStatus():
     # 取得剩餘停車位數
     url = "https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/ParkingAvailability/Road/Freeway/ServiceArea?%24format=JSON" 
     dataAll = TDX.getData(url)
@@ -59,7 +61,24 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
             case _:
                 return "無資料"
     
+    collection_ServiceAreaData = MongoDB.getCollection("traffic_hero","service_area_data") # 取得MongoDB的collection
+    
+    # 轉換時區(待模組化)
+    import pytz
+    taipei_timezone = pytz.timezone('Asia/Taipei')
+    current_time = datetime.now(taipei_timezone)
+
     for result in collection.find({}, {"_id": 0}): # Demo
+        service_area = list(collection_ServiceAreaData.find({"CarParkName.Zh_tw": {"$regex": result["service_name"][:2]}}, {"_id": 0}))
+        if len(service_area) > 1: # 有些服務區有區分南北向，有些是共用同一個服務區
+            for i in service_area:
+                if i["CarParkName"]["Zh_tw"][2:4] == "南下" and result["web_direction"] == "南向":
+                    service_area = i
+                elif i["CarParkName"]["Zh_tw"][2:4] == "北上" and result["web_direction"] == "北向":
+                    service_area = i
+        else:
+            service_area = service_area[0]
+
         if "available" in result:
             status = parkingLevelToStatus(result['parkingLevel'])
             content = {
@@ -80,13 +99,15 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                     }
                 ],
                 "voice": f"前方{result['service_name']}，目前還有{result['available']}格停車位，停車位{status}",
-                "longitude": "121.000000", # Demo
-                "latitude": "25.000000", # Demo
-                "direction": "string", # Demo
-                "distance": 2.5, # Demo
-                "priority": "1", # Demo
-                "start": datetime.now(),
-                "end": datetime.now() + timedelta(hours=10000), # Demo
+                "location": {
+                    "longitude": service_area["CarParkPosition"]["PositionLon"],
+                    "latitude": service_area["CarParkPosition"]["PositionLat"]
+                },
+                "direction": result["web_direction"],
+                "distance": 2.5,
+                "priority": "Demo", # Demo
+                "start": current_time,
+                "end": current_time + timedelta(minutes = 10),
                 "active": True,
                 "id": "string"
                 }
@@ -105,20 +126,58 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                     }
                 ],
                 "voice": f"前方{result['service_name']}，停車位{status}",
-                "longitude": "121.000000", # Demo
-                "latitude": "25.000000", # Demo
-                "direction": "string", # Demo
-                "distance": 2.5, # Demo
-                "priority": "1", # Demo
-                "start": datetime.now(),
-                "end": datetime.now() + timedelta(hours=10000), # Demo
+                "location": {
+                    "longitude": service_area["CarParkPosition"]["PositionLon"],
+                    "latitude": service_area["CarParkPosition"]["PositionLat"]
+                },
+                "direction": result["web_direction"],
+                "distance": 2.5,
+                "priority": "Demo", # Demo
+                "start": current_time,
+                "end": current_time + timedelta(minutes = 10),
                 "active": True,
                 "id": "string"
                 }
 
-        CMS.createContent("car", content)
+        CMS_MainContent.create("car", content)
  
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+
+@router.put("/ServiceArea/Data", summary="【Update】即時訊息推播-高速公路服務區停車場資料")
+async def getServiceAreaDataAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+    """
+    一、資料來源: \n
+            1. 交通部運輸資料流通服務平臺(TDX) - 全臺高速公路服務區停車場資料 v1
+                https://tdx.transportdata.tw/api-service/swagger/basic/945f57da-f29d-4dfd-94ec-c35d9f62be7d#/FreewayCarPark/ParkingApi_FreewayCarPark \n
+    二、Input \n
+            1. 
+    三、Output \n
+            1. 
+    四、說明 \n
+            1.
+    """
+    Token.verifyToken(token.credentials,"admin") # JWT驗證
+    return await getServiceAreaData()
+    
+async def getServiceAreaData():
+    data = TDX.getData("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/Road/Freeway/ServiceArea?%24format=JSON")
+    collection = MongoDB.getCollection("traffic_hero","service_area_data") # 取得MongoDB的collection
+    collection.drop() # 清空collection
+    collection.insert_many(data["CarParks"])
+    
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
