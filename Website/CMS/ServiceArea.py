@@ -15,7 +15,7 @@ import requests
 router = APIRouter(tags=["3.即時訊息推播(Website)"],prefix="/Website/CMS")
 
 @router.put("/ServiceArea/ParkingStatus", summary="【Update】即時訊息推播-高速公路服務區停車位狀態")
-async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+async def getServiceArea_ParkingStatusAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
     一、資料來源: \n
             1. 即時路況 - 交通部高速公路局
@@ -30,7 +30,9 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    
+    return await getServiceArea_ParkingStatus()
+
+async def getServiceArea_ParkingStatus():
     # 取得剩餘停車位數
     url = "https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/ParkingAvailability/Road/Freeway/ServiceArea?%24format=JSON" 
     dataAll = TDX.getData(url)
@@ -136,9 +138,8 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
  
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
-
 @router.put("/ServiceArea/Data", summary="【Update】即時訊息推播-高速公路服務區停車場資料")
-async def getServiceAreaData(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+async def getServiceAreaDataAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
     一、資料來源: \n
             1. 交通部運輸資料流通服務平臺(TDX) - 全臺高速公路服務區停車場資料 v1
@@ -151,14 +152,30 @@ async def getServiceAreaData(token: HTTPAuthorizationCredentials = Depends(HTTPB
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
+    return await getServiceAreaData()
     
+async def getServiceAreaData():
     data = TDX.getData("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/Road/Freeway/ServiceArea?%24format=JSON")
     collection = MongoDB.getCollection("traffic_hero","service_area_data") # 取得MongoDB的collection
     collection.drop() # 清空collection
     collection.insert_many(data["CarParks"])
     
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     # chrome_options = webdriver.ChromeOptions() # 創建設定實例
     # chrome_options.add_argument('--window-size=1920,1080')  # 指定解析度
