@@ -63,6 +63,11 @@ async def getServiceArea_ParkingStatus():
     
     collection_ServiceAreaData = MongoDB.getCollection("traffic_hero","service_area_data") # 取得MongoDB的collection
     
+    # 轉換時區(待模組化)
+    import pytz
+    taipei_timezone = pytz.timezone('Asia/Taipei')
+    current_time = datetime.now(taipei_timezone)
+
     for result in collection.find({}, {"_id": 0}): # Demo
         service_area = list(collection_ServiceAreaData.find({"CarParkName.Zh_tw": {"$regex": result["service_name"][:2]}}, {"_id": 0}))
         if len(service_area) > 1: # 有些服務區有區分南北向，有些是共用同一個服務區
@@ -101,8 +106,8 @@ async def getServiceArea_ParkingStatus():
                 "direction": result["web_direction"],
                 "distance": 2.5,
                 "priority": "Demo", # Demo
-                "start": datetime.now(),
-                "end": datetime.now() + timedelta(minutes = 10),
+                "start": current_time,
+                "end": current_time + timedelta(minutes = 10),
                 "active": True,
                 "id": "string"
                 }
@@ -128,8 +133,8 @@ async def getServiceArea_ParkingStatus():
                 "direction": result["web_direction"],
                 "distance": 2.5,
                 "priority": "Demo", # Demo
-                "start": datetime.now(),
-                "end": datetime.now() + timedelta(minutes = 10),
+                "start": current_time,
+                "end": current_time + timedelta(minutes = 10),
                 "active": True,
                 "id": "string"
                 }
