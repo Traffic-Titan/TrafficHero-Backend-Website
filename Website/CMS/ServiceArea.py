@@ -8,7 +8,7 @@ from PIL import Image
 import os
 from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
-import Website.CMS.CRUD as CMS
+import Website.CMS.MainContent as CMS_MainContent
 from datetime import datetime, timedelta
 import requests
 
@@ -80,8 +80,10 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                     }
                 ],
                 "voice": f"前方{result['service_name']}，目前還有{result['available']}格停車位，停車位{status}",
-                "longitude": "121.000000", # Demo
-                "latitude": "25.000000", # Demo
+                "position": {
+                    "longitude": "121.000000", # Demo
+                    "latitude": "25.000000", # Demo
+                },
                 "direction": "string", # Demo
                 "distance": 2.5, # Demo
                 "priority": "1", # Demo
@@ -105,8 +107,10 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                     }
                 ],
                 "voice": f"前方{result['service_name']}，停車位{status}",
-                "longitude": "121.000000", # Demo
-                "latitude": "25.000000", # Demo
+                "position": {
+                    "longitude": "121.000000", # Demo
+                    "latitude": "25.000000", # Demo
+                },
                 "direction": "string", # Demo
                 "distance": 2.5, # Demo
                 "priority": "1", # Demo
@@ -116,7 +120,7 @@ async def service_area_parking_status(token: HTTPAuthorizationCredentials = Depe
                 "id": "string"
                 }
 
-        CMS.createContent("car", content)
+        CMS_MainContent.create("car", content)
  
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 

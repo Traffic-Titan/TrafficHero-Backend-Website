@@ -270,8 +270,10 @@ async def updateNews():
 scheduler.add_job(updateNews, 'interval', minutes = 5)
 
 # 3.即時訊息推播(Website)
-from Website.CMS import CRUD, ServiceArea, Shoulder
-app.include_router(CRUD.router)
+from Website.CMS import MainContent, Sidebar, ServiceArea, Shoulder
+app.include_router(MainContent.router)
+app.include_router(Sidebar.router)
+
 app.include_router(ServiceArea.router)
 app.include_router(Shoulder.router)
 
