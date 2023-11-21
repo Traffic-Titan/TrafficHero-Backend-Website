@@ -350,8 +350,7 @@ from Website.Information.Road.Parking.OnStreet import Taichung
 app.include_router(Taichung.router)
 
 # 4-2.大眾運輸資訊(Website)
-from Website.Information.PublicTransport import PublicBicycle,InterCityBusRoute
-app.include_router(PublicBicycle.router)
+from Website.Information.PublicTransport import InterCityBusRoute
 app.include_router(InterCityBusRoute.router)
 
 from Website.Information.PublicTransport.Bus import StopOfRoute, Route
@@ -360,6 +359,11 @@ app.include_router(Route.router)
 
 from Website.Information.PublicTransport.TaiwanRailway import Station
 app.include_router(Station.router)
+
+from Website.Information.PublicTransport.PublicBicycle import List, Availability, Main
+app.include_router(List.router)
+app.include_router(Availability.router)
+app.include_router(Main.router)
 
 # 5.觀光資訊(Website)
 from Website.Information.Tourism import Activity, Hotel, Parking, Restaurant, ScenicSpot
