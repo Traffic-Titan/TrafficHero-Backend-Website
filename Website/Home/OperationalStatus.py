@@ -40,6 +40,8 @@ async def update():
     await MRT("TRTC")
     await MRT("TYMC")
     await MRT("KRTC")
+    await MRT("TRTC")
+    await MRT("TRTCMG") # 貓空纜車
     
     # 公車
     # 北部
