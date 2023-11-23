@@ -43,58 +43,57 @@ def updateGasStationList():
                         # 遍歷XML中的每個Table元素
                         for table in root.findall(".//Table"):
                                 station_data = {}
-                                for element in table:
-                                        basic = {
-                                                "station_code": table.find("站代號").text,
-                                                "type": table.find("類別").text,
-                                                "station_name": table.find("站名").text,
-                                                "address": table.find("縣市").text + table.find("鄉鎮區").text + table.find("地址").text,
-                                                "phone": table.find("電話").text,
-                                                "available": True if table.find("營業中").text == "1" else False,
-                                                "in_freeway": True if table.find("國道高速公路").text == "1" else False,
-                                                "business_hours": table.find("營業時間").text
-                                        }
+                                basic = {
+                                        "station_code": table.find("站代號").text,
+                                        "type": table.find("類別").text,
+                                        "station_name": table.find("站名").text,
+                                        "address": table.find("縣市").text + table.find("鄉鎮區").text + table.find("地址").text,
+                                        "phone": table.find("電話").text,
+                                        "available": True if table.find("營業中").text == "1" else False,
+                                        "in_freeway": True if table.find("國道高速公路").text == "1" else False,
+                                        "business_hours": table.find("營業時間").text
+                                }
+                                
+                                gasoline = {
+                                        "92": True if table.find("無鉛92").text == "1" else False,
+                                        "95": True if table.find("無鉛95").text == "1" else False,
+                                        "98": True if table.find("無鉛98").text == "1" else False,
+                                        "alcohol_gasoline": True if table.find("酒精汽油").text == "1" else False,
+                                        "kerosene": True if table.find("煤油").text == "1" else False,
+                                        "super_diesel": True if table.find("超柴").text == "1" else False
+                                }
+                                
+                                payment = {
+                                        "member_card": True if table.find("會員卡").text == "1" else False,
+                                        "e_invoice": True if table.find("電子發票").text == "1" else False,
+                                        "easy_card": True if table.find("悠遊卡").text == "1" else False,
+                                        "i_pass": True if table.find("一卡通").text == "1" else False,
+                                        "happy_cash": True if table.find("HappyCash").text == "1" else False
+                                }
+                                
+                                other_service = {
+                                        "self_service": True if table.find("刷卡自助").text == "1" else False,
+                                        "self_service_diesel": True if table.find("自助柴油站").text == "1" else False,
+                                        "car_wash": table.find("洗車類別").text,
+                                        "etag": table.find("etag申裝儲值時間").text,
+                                        "maintenance": table.find("保養間時間").text
+                                }
+                                
+                                location = {
+                                        "longitude": float(table.find("經度").text),
+                                        "latitude": float(table.find("緯度").text)
+                                }
+                                
                                         
-                                        gasoline = {
-                                                "92": True if table.find("無鉛92").text == "1" else False,
-                                                "95": True if table.find("無鉛95").text == "1" else False,
-                                                "98": True if table.find("無鉛98").text == "1" else False,
-                                                "alcohol_gasoline": True if table.find("酒精汽油").text == "1" else False,
-                                                "kerosene": True if table.find("煤油").text == "1" else False,
-                                                "super_diesel": True if table.find("超柴").text == "1" else False
-                                        }
-                                        
-                                        payment = {
-                                                "member_card": True if table.find("會員卡").text == "1" else False,
-                                                "e_invoice": True if table.find("電子發票").text == "1" else False,
-                                                "easy_card": True if table.find("悠遊卡").text == "1" else False,
-                                                "i_pass": True if table.find("一卡通").text == "1" else False,
-                                                "happy_cash": True if table.find("HappyCash").text == "1" else False
-                                        }
-                                        
-                                        other_service = {
-                                                "self_service": True if table.find("刷卡自助").text == "1" else False,
-                                                "self_service_diesel": True if table.find("自助柴油站").text == "1" else False,
-                                                "car_wash": table.find("洗車類別").text,
-                                                "etag": table.find("etag申裝儲值時間").text,
-                                                "maintenance": table.find("保養間時間").text
-                                        }
-                                        
-                                        location = {
-                                                "longitude": float(table.find("經度").text),
-                                                "latitude": float(table.find("緯度").text)
-                                        }
-                                        
-                                          
-                                        data = {
-                                                "basic": basic,
-                                                "gasoline": gasoline,
-                                                "payment": payment,
-                                                "other_service": other_service,
-                                                "location": location
-                                        }
-                                        
-                                        documents.append(data)
+                                data = {
+                                        "basic": basic,
+                                        "gasoline": gasoline,
+                                        "payment": payment,
+                                        "other_service": other_service,
+                                        "location": location
+                                }
+                                
+                                documents.append(data)
 
                         collection.drop() # 刪除該collection所有資料
                         collection.insert_many(documents)
