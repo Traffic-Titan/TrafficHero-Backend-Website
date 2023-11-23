@@ -38,7 +38,7 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return await updateNews()
 
 async def updateNews():   
-    areas = ["TaichungCity","TainanCity","PingtungCounty","YilanCounty","MiaoliCounty","ChanghuaCounty","YunlinCounty","NewTaipei"]
+    areas = ["TaichungCity","TainanCity","PingtungCounty","YilanCounty","MiaoliCounty","ChanghuaCounty","YunlinCounty","NewTaipeiCity", "ChiayiCity","TaoyuanCity"]
     
     for area in areas: # 依照區域更新資料
         await dataToDatabase(area)

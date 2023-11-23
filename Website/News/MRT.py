@@ -39,6 +39,7 @@ async def updateNews():
     await dataToDatabase("TaipeiCity") # 臺北捷運
     await dataToDatabase("TaoyuanCity") # 桃園捷運
     await dataToDatabase("KaohsiungCity") # 高雄捷運
+    await dataToDatabase("TaichungCity") # 臺中捷運
             
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
