@@ -40,7 +40,7 @@ async def update():
     await MRT("TRTC")
     await MRT("TYMC")
     await MRT("KRTC")
-    await MRT("TRTC")
+    await MRT("TMRT")
     await MRT("TRTCMG") # 貓空纜車
     
     # 公車
@@ -151,6 +151,10 @@ async def MRT(system: str): # 捷運
             await dataToDatabase("桃園捷運", status, Logo.get("mrt", "TaoyuanCity"))
         case "KRTC":
             await dataToDatabase("高雄捷運", status, Logo.get("mrt", "KaohsiungCity"))
+        case "TRTCMG":
+            await dataToDatabase("貓空纜車", status, Logo.get("mrt", "TaipeiCity"))
+        case "TMRT":
+            await dataToDatabase("臺中捷運", status, Logo.get("mrt", "TaichungCity"))
 
 async def InterCityBus(): # 公路客運
     url = "https://tdx.transportdata.tw/api/basic/v2/Bus/Alert/InterCity?%24format=JSON" # 先寫死，以後會再放到資料庫
