@@ -90,7 +90,8 @@ def updateGasStationList():
                                         "gasoline": gasoline,
                                         "payment": payment,
                                         "other_service": other_service,
-                                        "location": location
+                                        "location": location,
+                                        "icon_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/CPC_Corporation%2C_Taiwan_Seal.svg/1024px-CPC_Corporation%2C_Taiwan_Seal.svg.png"
                                 }
                                 
                                 documents.append(data)
