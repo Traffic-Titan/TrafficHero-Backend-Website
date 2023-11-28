@@ -80,7 +80,7 @@ async def dataToDatabase(name: str, status:str, logo_url: str):
         document = {
             "name": name,
             "status": status,
-            "status_text": "停止營運" if status == "red" else "部分營運" if status == "yellow" else "正常營運",
+            "status_text": "停止營運" if status == "red" else "部分營運" if status == "yellow" else "無資料" if status == "gray" else "正常營運",
             "logo_url": logo_url
         }
 
@@ -91,7 +91,7 @@ async def dataToDatabase(name: str, status:str, logo_url: str):
 
 async def TRA(): # 臺鐵
     url = "https://tdx.transportdata.tw/api/basic/v3/Rail/TRA/Alert?%24format=JSON" # 先寫死，以後會再放到資料庫
-    status = "無資料" # 預設
+    status = "gray" # 預設
     
     try:
         data = TDX.getData(url) # 取得資料
@@ -110,7 +110,7 @@ async def TRA(): # 臺鐵
 
 async def THSR(): # 高鐵
     url = "https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/AlertInfo?%24format=JSON" # 先寫死，以後會再放到資料庫
-    status = "無資料" # 預設
+    status = "gray" # 預設
     
     try:
         data = TDX.getData(url) # 取得資料
@@ -129,7 +129,7 @@ async def THSR(): # 高鐵
 
 async def MRT(system: str): # 捷運
     url = f"https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/Alert/{system}?%24format=JSON" # 先寫死，以後會再放到資料庫
-    status = "無資料" # 預設
+    status = "gray" # 預設
     
     try:
         data = TDX.getData(url) # 取得資料
@@ -158,7 +158,7 @@ async def MRT(system: str): # 捷運
 
 async def InterCityBus(): # 公路客運
     url = "https://tdx.transportdata.tw/api/basic/v2/Bus/Alert/InterCity?%24format=JSON" # 先寫死，以後會再放到資料庫
-    status = "無資料" # 預設
+    status = "gray" # 預設
     
     try:
         data = TDX.getData(url) # 取得資料
@@ -176,7 +176,7 @@ async def InterCityBus(): # 公路客運
 
 async def Bus_v2(area: str): # 各縣市公車
     url = f"https://tdx.transportdata.tw/api/basic/v2/Bus/Alert/City/{area}?%24format=JSON" # 先寫死，以後會再放到資料庫
-    status = "無資料" # 預設
+    status = "gray" # 預設
 
     try:
         data = TDX.getData(url) # 取得資料
@@ -232,7 +232,7 @@ async def Bus_v2(area: str): # 各縣市公車
 
 async def Bus_v3(area: str): # 各縣市公車
     url = f"https://tdx.transportdata.tw/api/basic/v3/Bus/Alert/City/{area}?%24format=JSON" # 先寫死，以後會再放到資料庫
-    status = "無資料" # 預設
+    status = "gray" # 預設
 
     try:
         data = TDX.getData(url) # 取得資料
