@@ -14,6 +14,8 @@ import requests
 
 router = APIRouter(tags=["3.即時訊息推播(Website)"],prefix="/Website/CMS")
 
+collection_cms = MongoDB.getCollection("traffic_hero","cms_speed_enforcement")
+
 @router.put("/SpeedEnforcement", summary="【Update】即時訊息推播-測速執法設置點")
 async def getSpeedEnforcementAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
@@ -46,38 +48,38 @@ async def getSpeedEnforcement():
     current_time = datetime.now(taipei_timezone)
 
     # count = 0
+    documents = []
     for d in collection.find({},{"_id":0}):
         # count += 1
         # print(f"更新第{count}筆資料")
-        content = {
-            "type": "測速執法設置點",
-            "icon": "https://blog.eddie.tw/speed_enforcement.png",
-            "content": [
-                {
-                    "text": ["測速照相"],
-                    "color": ["#FFFFFF"]
+        documents.append({
+                "type": "測速執法設置點",
+                "icon": "https://blog.eddie.tw/speed_enforcement.png",
+                "content": [
+                    {
+                        "text": ["測速照相"],
+                        "color": ["#FFFFFF"]
+                    },
+                    {
+                        "text": [d["limit"],"km/h"],
+                        "color": ["#FFFFFF","#FFFFFF"]
+                    }
+                ],
+                "voice": f"前方有測速照相，限速{d['limit']}公里",
+                "location": {
+                    "longitude": float(d["Longitude"]),
+                    "latitude": float(d["Latitude"])
                 },
-                {
-                    "text": [d["limit"],"km/h"],
-                    "color": ["#FFFFFF","#FFFFFF"]
-                }
-            ],
-            "voice": f"前方有測速照相，限速{d['limit']}公里",
-            "location": {
-                "longitude": float(d["Longitude"]),
-                "latitude": float(d["Latitude"])
-            },
-            "direction": d["direct"],
-            "distance": 1,
-            "priority": "Demo", # Demo
-            "speed_limit": d["limit"],
-            "start": current_time,
-            "end": current_time + timedelta(minutes = 10),
-            "active": True,
-            "id": "string"
-            }
+                "direction": d["direct"],
+                "distance": 1,
+                "priority": "Demo", # Demo
+                "speed_limit": d["limit"],
+                "start": current_time,
+                "end": current_time + timedelta(minutes = 10),
+                "active": True,
+                "id": "string"
+        })
 
-        CMS_MainContent.create("car", content)
-        CMS_MainContent.create("scooter", content)
-
+    collection_cms.insert_many(documents)
+    
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
