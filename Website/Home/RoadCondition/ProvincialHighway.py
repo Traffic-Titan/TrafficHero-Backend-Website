@@ -102,29 +102,41 @@ async def updateRoadCondition_ProvincialHighway():
     collection = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway")
     collection_cms_list = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_list")
     collection_cms_content = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_content")
-    
     try:
         data = collection_cms_list.find({}, {"_id": 0})
         documents = []
 
         for d in data:
-            cms_content = collection_cms_content.find_one({"CMSID": d.get("CMSID")}, {"_id": 0, "Messages": 1})
-            
-            if cms_content:
-                documents.append({
-                    "cms_id": d.get("CMSID"),
-                    "position": {
-                        "longitude": d.get("PositionLon"),
-                        "latitude": d.get("PositionLat")
-                        },
-                    "road_name": d.get("RoadName"),
-                    "content": cms_content.get("Messages")
-                })
+                cms_content = collection_cms_content.find_one({"CMSID": d.get("CMSID")}, {"_id": 0, "Messages": 1})
+                
+                if cms_content:
+                       message = cms_content.get("Messages")
+                       if(message):
+                                messageArray = []
+                                if("[" in message[0] and "]" in message[0]):
+                     
+                                        message[0] = message[0].replace("["," ")
+                                        message[0] = message[0].replace("]","")
+                                        messageArray = message[0].split(" ")
+                                        messageArray.pop(0)
+                                else:
+                                        messageArray.append(message[0])
+                                print(messageArray)
+                                documents.append({
+                                                "cms_id": d.get("CMSID"),
+                                                "position": {
+                                                "longitude": d.get("PositionLon"),
+                                                "latitude": d.get("PositionLat")
+                                                },
+                                                "road_name": d.get("RoadName"),
+                                                "content": messageArray
+                                        })
 
         collection.drop()
         collection.insert_many(documents)
         
     except Exception as e:
+        
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
