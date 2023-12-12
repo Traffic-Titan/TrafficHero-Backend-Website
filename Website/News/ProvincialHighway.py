@@ -62,7 +62,7 @@ async def updateNews():
         documents = []
         logo_url = Logo.get("provincial_highway", "All")
         
-        collection = MongoDB.getCollection("traffic_hero", "road_area")
+        collection = await MongoDB.getCollection("traffic_hero", "road_area")
         for d in data["Newses"]:
             patterns = [r"台\d", r"國\d"]
             pattern = "|".join(patterns)
@@ -114,7 +114,7 @@ async def updateNews():
                 documents.append(document)
 
 
-        collection = MongoDB.getCollection("traffic_hero", "news_provincial_highway")
+        collection = await MongoDB.getCollection("traffic_hero", "news_provincial_highway")
         collection.drop()
         collection.insert_many(documents)
     except Exception as e:

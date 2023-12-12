@@ -28,7 +28,7 @@ async def updateRoadCondition_Freeway_CMS_ListAPI(token: HTTPAuthorizationCreden
         return await updateRoadCondition_Freeway_CMS_List()
 
 async def updateRoadCondition_Freeway_CMS_List():
-        collection = MongoDB.getCollection("traffic_hero","road_condition_freeway_cms_list")
+        collection = await MongoDB.getCollection("traffic_hero","road_condition_freeway_cms_list")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/CMS/Freeway?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料
@@ -57,7 +57,7 @@ async def updateRoadCondition_Freeway_CMS_ContentAPI(token: HTTPAuthorizationCre
         return await updateRoadCondition_Freeway_CMS_Content()
 
 async def updateRoadCondition_Freeway_CMS_Content():
-        collection = MongoDB.getCollection("traffic_hero","road_condition_freeway_cms_content")
+        collection = await MongoDB.getCollection("traffic_hero","road_condition_freeway_cms_content")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/Live/CMS/Freeway?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料
@@ -99,9 +99,9 @@ async def updateRoadCondition_FreewayAPI(token: HTTPAuthorizationCredentials = D
         return await updateRoadCondition_Freeway()
 
 async def updateRoadCondition_Freeway():
-    collection = MongoDB.getCollection("traffic_hero", "road_condition_freeway")
-    collection_cms_list = MongoDB.getCollection("traffic_hero", "road_condition_freeway_cms_list")
-    collection_cms_content = MongoDB.getCollection("traffic_hero", "road_condition_freeway_cms_content")
+    collection = await MongoDB.getCollection("traffic_hero", "road_condition_freeway")
+    collection_cms_list = await MongoDB.getCollection("traffic_hero", "road_condition_freeway_cms_list")
+    collection_cms_content = await MongoDB.getCollection("traffic_hero", "road_condition_freeway_cms_content")
     
     try:
         data = collection_cms_list.find({}, {"_id": 0})

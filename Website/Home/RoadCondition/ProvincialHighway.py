@@ -28,7 +28,7 @@ async def updateRoadCondition_ProvincialHighway_CMS_ListAPI(token: HTTPAuthoriza
         return await updateRoadCondition_ProvincialHighway_CMS_List()
 
 async def updateRoadCondition_ProvincialHighway_CMS_List():
-        collection = MongoDB.getCollection("traffic_hero","road_condition_provincial_highway_cms_list")
+        collection = await MongoDB.getCollection("traffic_hero","road_condition_provincial_highway_cms_list")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/CMS/Highway?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料
@@ -57,7 +57,7 @@ async def updateRoadCondition_ProvincialHighway_CMS_ContentAPI(token: HTTPAuthor
         return await updateRoadCondition_ProvincialHighway_CMS_Content()
 
 async def updateRoadCondition_ProvincialHighway_CMS_Content():
-        collection = MongoDB.getCollection("traffic_hero","road_condition_provincial_highway_cms_content")
+        collection = await MongoDB.getCollection("traffic_hero","road_condition_provincial_highway_cms_content")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/Live/CMS/Highway?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料
@@ -99,9 +99,9 @@ async def updateRoadCondition_ProvincialHighwayAPI(token: HTTPAuthorizationCrede
         return await updateRoadCondition_ProvincialHighway()
 
 async def updateRoadCondition_ProvincialHighway():
-    collection = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway")
-    collection_cms_list = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_list")
-    collection_cms_content = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_content")
+    collection = await MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway")
+    collection_cms_list = await MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_list")
+    collection_cms_content = await MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_content")
     try:
         data = collection_cms_list.find({}, {"_id": 0})
         documents = []
@@ -158,7 +158,7 @@ async def updateRoadCondition_ProvincialHighway():
 #         return updateRoadCondition_ProvincialHighway()
 
 # def updateRoadCondition_ProvincialHighway():
-#         collection = MongoDB.getCollection("traffic_hero","road_condition_provincial_highway")
+#         collection = await MongoDB.getCollection("traffic_hero","road_condition_provincial_highway")
 #         try:
 #                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/Live/VD/Highway?%24format=JSON" # 取得資料來源網址
 #                 data = TDX.getData(url) # 取得資料
@@ -187,7 +187,7 @@ async def updateRoadCondition_ProvincialHighway():
 #         return updateRoadCondition_ProvincialHighwayList()
 
 # def updateRoadCondition_ProvincialHighwayList():
-#         collection = MongoDB.getCollection("traffic_hero","road_condition_provincial_highway_list")
+#         collection = await MongoDB.getCollection("traffic_hero","road_condition_provincial_highway_list")
 #         try:
 #                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/VD/Highway?%24format=JSON" # 取得資料來源網址
 #                 data = TDX.getData(url) # 取得資料
@@ -224,7 +224,7 @@ async def updateRoadCondition_ProvincialHighway():
 # async def test(latitude: str, longitude: str, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
 #         Token.verifyToken(token.credentials, "admin")  # JWT验证
 
-#         collection = MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_list")
+#         collection = await MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_list")
 
 #         pipeline = [
 #         {

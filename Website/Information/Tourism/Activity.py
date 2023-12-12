@@ -25,7 +25,7 @@ async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()))
         return await update()
 
 async def update(): 
-    collection = MongoDB.getCollection("traffic_hero","tourism_activity")
+    collection = await MongoDB.getCollection("traffic_hero","tourism_activity")
     
     try:
         url = f"https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity?%24format=JSON" # 取得資料來源網址

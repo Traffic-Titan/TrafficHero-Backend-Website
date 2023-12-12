@@ -12,8 +12,6 @@ from typing import Optional
 
 router = APIRouter(tags=["1.首頁(Website)"],prefix="/Website/Home")
 
-collection = MongoDB.getCollection("traffic_hero","parking_fee") # 連線MongoDB
-
 @router.put("/ParkingFee/SystemStatus", summary="【Update】各縣市路邊停車費-系統狀態")
 async def updateParkingFee_SystemStatusAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
@@ -31,14 +29,27 @@ async def updateParkingFee_SystemStatusAPI(token: HTTPAuthorizationCredentials =
     return await updateParkingFee_SystemStatus()
     
 async def updateParkingFee_SystemStatus():
-    test_data = list(collection.find({"area": "test"},{"_id":0}))[0] # 取得資料庫內容
-    data = list(collection.find({},{"_id":0}))
+    collection = await MongoDB.getCollection("traffic_hero", "parking_fee")  # 連線MongoDB
+
+    cursor = collection.find({"area": "test"}, {"_id": 0})
+    test_data = await cursor.to_list(length=1)
+    if test_data:
+        test_data = test_data[0]  # 取得資料庫內容
+    else:
+        # 處理未找到測試數據的情況
+        return {"message": "未找到測試數據"}
+
+    data_cursor = collection.find({}, {"_id": 0})
+    data = await data_cursor.to_list(length=100)  # 假設您希望返回最多 100 條記錄
     for d in data:
         await process(d, test_data)
-        
+
     return {"message": "更新成功"}
 
+
 async def process(d, test_data):
+    collection = await MongoDB.getCollection("traffic_hero","parking_fee") # 連線MongoDB
+    
     area = d["area"]
     
     try:
@@ -46,8 +57,8 @@ async def process(d, test_data):
             url = d['url']
             url = url.replace("Insert_CarID", test_data["license_plate_number"]) # 取代車牌號碼
             url = url.replace("Insert_CarType", test_data["type"]) # 取代車輛類別
-            with httpx.Client(timeout = 2) as client: # timeout
-                response = client.get(url) # 發送請求
+            async with httpx.AsyncClient(timeout = 2) as client: # timeout
+                response = await client.get(url) # 發送請求
                 dataAll = response.json()
             
             collection.update_one({"area": area},{"$set": {"status": True}}) # 更新狀態

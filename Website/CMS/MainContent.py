@@ -38,29 +38,30 @@ class cms(BaseModel):
     active: bool
     id: str = None
 
-collection_main_car = MongoDB.getCollection("traffic_hero","cms_main_car")
-collection_main_scooter = MongoDB.getCollection("traffic_hero","cms_main_scooter")
-
 @router.get("/Main/Read", summary="【Read】即時訊息推播-主要內容")
 async def get(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
-    """
-    一、資料來源: \n
-            1. 
-    二、Input \n
-            1. 
-    三、Output \n
-            1. 
-    四、說明 \n
-            1.
-    """
-    Token.verifyToken(token.credentials,"admin") # JWT驗證
-    result_car = collection_main_car.find({},{"_id":0})
-    result_scooter = collection_main_scooter.find({},{"_id":0})
+        """
+        一、資料來源: \n
+                1. 
+        二、Input \n
+                1. 
+        三、Output \n
+                1. 
+        四、說明 \n
+                1.
+        """
+        Token.verifyToken(token.credentials,"admin") # JWT驗證
     
-    return {"car": list(result_car), "scooter": list(result_scooter)}
+        collection_main_car = await MongoDB.getCollection("traffic_hero","cms_main_car")
+        collection_main_scooter = await MongoDB.getCollection("traffic_hero","cms_main_scooter")
+
+        result_car = collection_main_car.find({},{"_id":0})
+        result_scooter = collection_main_scooter.find({},{"_id":0})
+    
+        return {"car": list(result_car), "scooter": list(result_scooter)}
 
 @router.post("/Main/Create", summary="【Create】即時訊息推播-主要內容")
-async def createAP(mode:str ,data: cms, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+async def createAPI(mode:str ,data: cms, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
     一、資料來源: \n
             1. 
@@ -72,61 +73,70 @@ async def createAP(mode:str ,data: cms, token: HTTPAuthorizationCredentials = De
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
-    return create(mode,data)
+    return await create(mode,data)
 
-def create(mode:str ,data: cms):
-    match mode:
-        case "car":
-            inserted_result = collection_main_car.insert_one(data)
-            id = str(inserted_result.inserted_id)
-            collection_main_car.update_one({"_id": inserted_result.inserted_id}, {"$set": {"id": id}})
-        case "scooter":
-            inserted_result = collection_main_scooter.insert_one(data)
-            id = str(inserted_result.inserted_id)
-            collection_main_scooter.update_one({"_id": inserted_result.inserted_id}, {"$set": {"id": id}})
-            
-    return {"message": "新增成功"}
+async def create(mode:str ,data: cms):
+        collection_main_car = await MongoDB.getCollection("traffic_hero","cms_main_car")
+        collection_main_scooter = await MongoDB.getCollection("traffic_hero","cms_main_scooter")
+        
+        match mode:
+                case "car":
+                        inserted_result = collection_main_car.insert_one(data)
+                        id = str(inserted_result.inserted_id)
+                        collection_main_car.update_one({"_id": inserted_result.inserted_id}, {"$set": {"id": id}})
+                case "scooter":
+                        inserted_result = collection_main_scooter.insert_one(data)
+                        id = str(inserted_result.inserted_id)
+                        collection_main_scooter.update_one({"_id": inserted_result.inserted_id}, {"$set": {"id": id}})
+                
+        return {"message": "新增成功"}
 
 @router.put("/Main/Update", summary="【Update】即時訊息推播-主要內容")
 async def update(mode:str ,data: cms, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
-    """
-    一、資料來源: \n
-            1. 
-    二、Input \n
-            1. 
-    三、Output \n
-            1. 
-    四、說明 \n
-            1.
-    """
-    Token.verifyToken(token.credentials,"admin") # JWT驗證
-    
-    match mode:
-        case "car":
-            collection_main_car.update_one({"id": data.id}, {"$set": data.dict()})
-        case "scooter":
-            collection_main_scooter.update_one({"id": data.id}, {"$set": data.dict()})
+        """
+        一、資料來源: \n
+                1. 
+        二、Input \n
+                1. 
+        三、Output \n
+                1. 
+        四、說明 \n
+                1.
+        """
+        Token.verifyToken(token.credentials,"admin") # JWT驗證
+        
+        collection_main_car = await MongoDB.getCollection("traffic_hero","cms_main_car")
+        collection_main_scooter = await MongoDB.getCollection("traffic_hero","cms_main_scooter")
+        
+        match mode:
+                case "car":
+                        collection_main_car.update_one({"id": data.id}, {"$set": data.dict()})
+                case "scooter":
+                        collection_main_scooter.update_one({"id": data.id}, {"$set": data.dict()})
 
-    return {"message": "更新成功"}
+        return {"message": "更新成功"}
 
 @router.delete("/Main/Delete", summary="【Delete】即時訊息推播-主要內容")
 async def delete(mode:str , id: str, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
-    """
-    一、資料來源: \n
-            1. 
-    二、Input \n
-            1. 
-    三、Output \n
-            1. 
-    四、說明 \n
-            1.
-    """
-    Token.verifyToken(token.credentials,"admin") # JWT驗證
+        """
+        一、資料來源: \n
+                1. 
+        二、Input \n
+                1. 
+        三、Output \n
+                1. 
+        四、說明 \n
+                1.
+        """
+        Token.verifyToken(token.credentials,"admin") # JWT驗證
     
-    match mode:
-        case "car":
-            collection_main_car.delete_one({"id": id})
-        case "scooter":
-            collection_main_scooter.delete_one({"id": id})
+        collection_main_car = await MongoDB.getCollection("traffic_hero","cms_main_car")
+        collection_main_scooter = await MongoDB.getCollection("traffic_hero","cms_main_scooter")
+    
+        match mode:
+                case "car":
+                        collection_main_car.delete_one({"id": id})
+                case "scooter":
+                        collection_main_scooter.delete_one({"id": id})
 
-    return {"message": "刪除成功"}
+        return {"message": "刪除成功"}

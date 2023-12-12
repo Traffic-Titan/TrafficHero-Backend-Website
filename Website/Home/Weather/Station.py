@@ -32,7 +32,7 @@ async def updateStation():
         load_dotenv()
         CWA_API_Key = os.getenv('CWA_API_Key') 
         
-        collection = MongoDB.getCollection("traffic_hero","weather_station") # 取得無人氣象測站資料
+        collection = await MongoDB.getCollection("traffic_hero","weather_station") # 取得無人氣象測站資料
         
         try:
                 observation_station_unmanned =  requests.get(f'https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0001-001?Authorization={CWA_API_Key}').json()

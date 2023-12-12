@@ -4,9 +4,7 @@ import Service.Token as Token
 from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
 
-
 router = APIRouter(tags=["4-1.道路資訊(Website)"],prefix="/Website/Information/Road")
-collection = MongoDB.getCollection("traffic_hero","information_parking_city_parking_num")
 
 @router.put("/CityCarPark_ParkingNum",summary="【Update】道路資訊-指定縣市停車場車位數量")
 async def CityCarPark_ParkingNum(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -23,8 +21,11 @@ async def CityCarPark_ParkingNum(token: HTTPAuthorizationCredentials = Depends(H
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
 
-    return updateInfo()
-def updateInfo():
+    return await updateInfo()
+
+async def updateInfo():
+    collection = await MongoDB.getCollection("traffic_hero","information_parking_city_parking_num")
+    
     collection.drop() # 刪除該collection所有資料
     documents = []
 

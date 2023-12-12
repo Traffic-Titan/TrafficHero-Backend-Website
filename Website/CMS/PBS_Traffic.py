@@ -26,7 +26,7 @@ async def getPBS_TrafficAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBe
 async def getPBS_Traffic():
     documents = []
 
-    collection = MongoDB.getCollection("traffic_hero","cms_main_car") # 取得MongoDB的collection
+    collection = await MongoDB.getCollection("traffic_hero","cms_main_car") # 取得MongoDB的collection
 
     pbsRequest = json.load(request.urlopen("https://od.moi.gov.tw/MOI/v1/pbs"))
 

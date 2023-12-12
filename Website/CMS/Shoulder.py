@@ -32,7 +32,7 @@ async def getStauts(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()))
     # 取得1968資料
     data = requests.get(f'https://1968.freeway.gov.tw/api/getShoulder?freewayid=0&expresswayid=0').json()
     
-    collection = MongoDB.getCollection("traffic_hero","freeway_shoulder_status") # 取得MongoDB的collection
+    collection = await MongoDB.getCollection("traffic_hero","freeway_shoulder_status") # 取得MongoDB的collection
     collection.delete_many({}) # 清空collection
     collection.insert_many(data["response"])
     

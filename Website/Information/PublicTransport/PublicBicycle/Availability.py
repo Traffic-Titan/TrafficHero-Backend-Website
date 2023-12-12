@@ -5,7 +5,6 @@ from Main import MongoDB # 引用MongoDB連線實例
 import Service.TDX as TDX
 
 router = APIRouter(tags=["4-2.大眾運輸資訊(Website)"],prefix="/Website/Information/PublicTransport")
-collection = MongoDB.getCollection("traffic_hero","information_public_bicycle_availability")
 
 @router.put("/PublicBicycle/Availability",summary="【Update】大眾運輸資訊-取得動態指定[縣市]的公共自行車即時車位資料")
 async def updateStation(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -26,11 +25,13 @@ async def updateStation(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     collection.drop() # 刪除所有資料
     
     for area in areas: # 依照區域更新資料
-        dataToDatabase(area)
+        await dataToDatabase(area)
 
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
     
-def dataToDatabase(area: str):
+async def dataToDatabase(area: str):
+    collection = await MongoDB.getCollection("traffic_hero","information_public_bicycle_availability")
+    
     try:
         url = f"https://tdx.transportdata.tw/api/basic/v2/Bike/Availability/City/{area}?%24format=JSON" # 取得資料來源網址
         data = TDX.getData(url) # 取得資料

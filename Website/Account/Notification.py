@@ -20,7 +20,7 @@ push_service = FCMNotification(api_key=FCM_API_KEY) # 初始化 FCMNotification
 async def broadcast(title: str, body: str, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     payload = Token.verifyToken(token.credentials,"user") # JWT驗證
     
-    collection = MongoDB.getCollection("traffic_hero","user_data") # 連線MongoDB
+    collection = await MongoDB.getCollection("traffic_hero","user_data") # 連線MongoDB
     
     # 查詢所有已訂閱的使用者
     subscribers = collection.find({"notification_token": {"$exists": True}}, {"_id": 0, "notification_token": 1})

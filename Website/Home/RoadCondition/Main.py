@@ -26,20 +26,20 @@ async def updateRoadConditionAPI(token: HTTPAuthorizationCredentials = Depends(H
         return await updateRoadCondition()
 
 async def updateRoadCondition():
-        collection = MongoDB.getCollection("traffic_hero","road_condition_freeway")
+        collection = await MongoDB.getCollection("traffic_hero","road_condition_freeway")
         try:
                 documents = []
                 
-                collection = MongoDB.getCollection("traffic_hero","road_condition_provincial_highway")
+                collection = await MongoDB.getCollection("traffic_hero","road_condition_provincial_highway")
                 documents.extend(collection.find({},{"_id":0}))
                 
-                collection = MongoDB.getCollection("traffic_hero","road_condition_freeway")
+                collection = await MongoDB.getCollection("traffic_hero","road_condition_freeway")
                 documents.extend(collection.find({},{"_id":0}))
                 
-                collection = MongoDB.getCollection("traffic_hero","road_condition_local_road")
+                collection = await MongoDB.getCollection("traffic_hero","road_condition_local_road")
                 documents.extend(collection.find({},{"_id":0}))
 
-                collection = MongoDB.getCollection("traffic_hero","road_condition")
+                collection = await MongoDB.getCollection("traffic_hero","road_condition")
                 collection.drop() # 刪除該collection所有資料
                 collection.insert_many(documents) # 將資料存入MongoDB
         except Exception as e:

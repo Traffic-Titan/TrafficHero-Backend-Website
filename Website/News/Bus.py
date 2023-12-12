@@ -14,8 +14,6 @@ import time
 
 router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 
-collection = MongoDB.getCollection("traffic_hero","news_bus")
-
 @router.put("/Bus",summary="【Update】最新消息-公車")
 async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())): 
     """
@@ -32,13 +30,17 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     Token.verifyToken(token.credentials,"admin") # JWT驗證
     return await updateNews()
 
-async def updateNews(): 
+async def updateNews():
+    collection = await MongoDB.getCollection("traffic_hero","news_bus")
+    
     for area in Area.english: # 依照區域更新資料
         await dataToDatabase(area)
 
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
     
 async def dataToDatabase(area: str):
+    collection = await MongoDB.getCollection("traffic_hero","news_bus")
+    
     try:
         url = Link.get("traffic_hero", "news_source", "bus", area) # 取得資料來源網址
         data = TDX.getData(url) # 取得資料

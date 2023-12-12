@@ -9,8 +9,6 @@ import Function.Logo as Logo
 
 router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 
-collection = MongoDB.getCollection("traffic_hero","news_freeway")
-
 @router.put("/Freeway",summary="【Update】最新消息-高速公路")
 async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
@@ -28,6 +26,8 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return await updateNews()
 
 async def updateNews():
+    collection = await MongoDB.getCollection("traffic_hero","news_freeway")
+    
     try:
         base_url = 'https://1968.freeway.gov.tw/n_whatsup?page=' # 網址
         total_pages = 10  # 總頁數

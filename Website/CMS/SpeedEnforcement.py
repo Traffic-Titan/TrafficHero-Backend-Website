@@ -14,8 +14,6 @@ import requests
 
 router = APIRouter(tags=["3.即時訊息推播(Website)"],prefix="/Website/CMS")
 
-collection_cms = MongoDB.getCollection("traffic_hero","cms_speed_enforcement")
-
 @router.put("/SpeedEnforcement", summary="【Update】即時訊息推播-測速執法設置點")
 async def getSpeedEnforcementAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
@@ -33,12 +31,14 @@ async def getSpeedEnforcementAPI(token: HTTPAuthorizationCredentials = Depends(H
     return await getSpeedEnforcement()
 
 async def getSpeedEnforcement():
+    collection_cms = await MongoDB.getCollection("traffic_hero","cms_speed_enforcement")
+    
     # 取得剩餘停車位數
     url = "https://od.moi.gov.tw/api/v1/rest/datastore/A01010000C-000674-011" 
     data = requests.get(url).json()
     
     
-    collection = MongoDB.getCollection("traffic_hero","speed_enforcement") # 取得MongoDB的collection
+    collection = await MongoDB.getCollection("traffic_hero","speed_enforcement") # 取得MongoDB的collection
     collection.delete_many({}) # 清空collection
     collection.insert_many(data["result"]["records"][1:]) # 第一筆資料為欄位名稱，故不加入
 

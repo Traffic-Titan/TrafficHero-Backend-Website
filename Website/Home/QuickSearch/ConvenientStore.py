@@ -29,8 +29,8 @@ router = APIRouter(tags=["1.首頁(Website)"],prefix="/Website/Home")
 #         return updateConvenientStoreList()
 
 # def updateConvenientStoreList():
-#         collection = MongoDB.getCollection("traffic_hero","convenient_store_list_new")
-#         collection_old = MongoDB.getCollection("traffic_hero","convenient_store_list_old")
+#         collection = await MongoDB.getCollection("traffic_hero","convenient_store_list_new")
+#         collection_old = await MongoDB.getCollection("traffic_hero","convenient_store_list_old")
 #         try:
 #                 # 網路上的CSV檔URL
 #                 csv_url = "https://data.gcis.nat.gov.tw/od/file?oid=C054F05C-0A6B-428C-B388-288BDB0618E4"

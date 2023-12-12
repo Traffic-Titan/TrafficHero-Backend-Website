@@ -22,9 +22,9 @@ async def updateStation(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
 
-    collection = MongoDB.getCollection("traffic_hero", "information_public_bicycle")
-    collection_list = MongoDB.getCollection("traffic_hero", "information_public_bicycle_list")
-    collection_availability = MongoDB.getCollection("traffic_hero", "information_public_bicycle_availability")
+    collection = await MongoDB.getCollection("traffic_hero", "information_public_bicycle")
+    collection_list = await MongoDB.getCollection("traffic_hero", "information_public_bicycle_list")
+    collection_availability = await MongoDB.getCollection("traffic_hero", "information_public_bicycle_availability")
     
     collection.drop() # 刪除所有資料
     

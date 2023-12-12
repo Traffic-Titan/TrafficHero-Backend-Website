@@ -27,7 +27,7 @@ async def update(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         response = requests.get(url)
         data = response.json()
         
-        collection = MongoDB.getCollection("traffic_hero","information_parking_on_street_taichung")
+        collection = await MongoDB.getCollection("traffic_hero","information_parking_on_street_taichung")
         collection.drop()
         collection.insert_many(data) # 將資料存入MongoDB
     except Exception as e:
@@ -56,7 +56,7 @@ async def update(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         response = requests.get(url)
         data = response.json()
         
-        collection = MongoDB.getCollection("traffic_hero","information_parking_on_street_availability_taichung")
+        collection = await MongoDB.getCollection("traffic_hero","information_parking_on_street_availability_taichung")
         collection.drop()
         collection.insert_many(data) # 將資料存入MongoDB
     except Exception as e:
