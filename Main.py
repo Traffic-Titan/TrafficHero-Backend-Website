@@ -59,7 +59,7 @@ async def startup_event():
 async def shutdown_event():
     # 在應用程式關閉時斷開連線
     # email_server.quit()
-    # MongoDB.closeConnection() # 測試中
+    MongoDB.closeConnection() # 測試中
 
 # ---------------------------------------------------------------
 
