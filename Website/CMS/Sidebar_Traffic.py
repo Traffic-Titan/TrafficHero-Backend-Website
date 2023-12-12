@@ -35,20 +35,20 @@ async def getSidebar_TrafficAPI(token: HTTPAuthorizationCredentials = Depends(HT
         roadName = f"國道{data['freewayid']}號"
         if(data['from_milepost']!=0):
             lengthOfMilePost = len(str(data['from_milepost']))
-            startMile =  str(data['from_milepost']).split(str(data['from_milepost'])[math.ceil(lengthOfMilePost/2)-1])[0]+"k+"+ str(data['from_milepost'])[lengthOfMilePost-3] + str(data['from_milepost'])[lengthOfMilePost-2]+ str(data['from_milepost'])[lengthOfMilePost-1]
+            startMile =  str(data['from_milepost']).split(str(data['from_milepost'])[math.ceil(lengthOfMilePost/2)-1])[0]+".+"+ str(data['from_milepost'])[lengthOfMilePost-3] + str(data['from_milepost'])[lengthOfMilePost-2]+ str(data['from_milepost'])[lengthOfMilePost-1]
             
             
         if(data['end_milepost']!=0):
             lengthOfMilePost = len(str(data['end_milepost']))
-            endMile =  str(data['end_milepost']).split(str(data['end_milepost'])[math.ceil(lengthOfMilePost/2)-1])[0]+"k+"+ str(data['end_milepost'])[lengthOfMilePost-3] + str(data['end_milepost'])[lengthOfMilePost-2]+ str(data['end_milepost'])[lengthOfMilePost-1]
-            print(endMile)
+            endMile =  str(data['end_milepost']).split(str(data['end_milepost'])[math.ceil(lengthOfMilePost/2)-1])[0]+".+"+ str(data['end_milepost'])[lengthOfMilePost-3] + str(data['end_milepost'])[lengthOfMilePost-2]+ str(data['end_milepost'])[lengthOfMilePost-1]
+            
         else:
             endMile = data['content'].split(data['content'][data['content'].find("-")])[1]
-            print(endMile)
+            
         try:
             url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Link/RoadClass/1/Mileage/{roadName}/0/{startMile}/to/{endMile}?%24format=JSON"
-            print(url)
-            roadInfo = TDX.getData(url)
+            # print(url)
+            # roadInfo = TDX.getData(url)
             
         except Exception as e:
             print(e)

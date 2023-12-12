@@ -121,7 +121,6 @@ async def updateRoadCondition_ProvincialHighway():
                                         messageArray.pop(0)
                                 else:
                                         messageArray.append(message[0])
-                                print(messageArray)
                                 documents.append({
                                                 "cms_id": d.get("CMSID"),
                                                 "position": {

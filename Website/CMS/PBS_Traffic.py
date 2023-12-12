@@ -17,35 +17,46 @@ import json
 
 router = APIRouter(tags=["3.即時訊息推播(Website)"],prefix="/Website/CMS")
 
-@router.put("/PBS_TrafficAPI", summary="【Update】即時訊息推播-警廣路況")
+@router.put("/PBS", summary="【Update】即時訊息推播-警廣路況")
 async def getPBS_TrafficAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
-    Token.verifyToken(token.credentials,"user") # JWT驗證
+    Token.verifyToken(token.credentials,"admin") # JWT驗證
 
-    collection = MongoDB.getCollection("traffic_hero","cms_car_testing") # 取得MongoDB的collection
+    return await getPBS_Traffic()
 
+async def getPBS_Traffic():
     documents = []
+
+    collection = MongoDB.getCollection("traffic_hero","cms_main_car") # 取得MongoDB的collection
 
     pbsRequest = json.load(request.urlopen("https://od.moi.gov.tw/MOI/v1/pbs"))
 
     # 指定時間格式
     timeFormatter = "%Y-%m-%d %H:%M:%S"
     count = 0
+    index = 0
 
     for data in pbsRequest:
         
-        if(count != 2):
+        if(count != 1000):
+            timeDate = datetime.strptime(data['happendate']+" "+ str(data['happentime']).replace(".0000000",""), timeFormatter)
+
             # 判斷字數小於25字以下的短行內容才進行處理
-            if(len(data['comment']) <= 25):
-                timeDate = datetime.strptime(data['happendate']+" "+ str(data['happentime']).replace(".0000000",""), timeFormatter)
-                detail = processData(data['roadtype']+" "+data['areaNm']+" "+data['comment']+" "+str(timeDate), data['roadtype'],data['direction'],data['y1'],data['x1'],datetime.strptime(data['happendate']+" "+ str(data['happentime']).replace(".0000000",""), timeFormatter))
-                documents.append(detail)
+            if(len(data['comment']) <= 25 and timeDate > datetime.now() - timedelta(hours=1)):
+
+                
+                detail = processData(data['roadtype']+" "+data['areaNm']+" "+data['comment']+" "+str(timeDate), data['roadtype'],data['region'],float(data['y1']),float(data['x1']),datetime.strptime(data['happendate']+" "+ str(data['happentime']).replace(".0000000",""), timeFormatter))
+                # documents.append(detail)
+            
+                CMS_MainContent.create("car", detail)
+                
                 count = count + 1
+                  
         else:
             break
-    # CMS_MainContent.create("car",)   
-    return documents
+    
+    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
-def processData(Description:str,type:str,direction:str,latitude:str,longitude:str,happenedTime:datetime):
+def processData(Description:str,type:str,direction:str,latitude:float,longitude:float,happenedTime:datetime):
 
     # 指定輸出格式
     user = Description +  """
