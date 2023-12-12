@@ -54,7 +54,7 @@ async def getPBS_Traffic():
         else:
             break
     
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 def processData(Description:str,type:str,direction:str,latitude:float,longitude:float,happenedTime:datetime):
 

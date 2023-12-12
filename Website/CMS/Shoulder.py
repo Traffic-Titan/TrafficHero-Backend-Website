@@ -33,12 +33,12 @@ async def getStauts(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()))
     data = requests.get(f'https://1968.freeway.gov.tw/api/getShoulder?freewayid=0&expresswayid=0').json()
     
     collection = await MongoDB.getCollection("traffic_hero","freeway_shoulder_status") # 取得MongoDB的collection
-    collection.delete_many({}) # 清空collection
-    collection.insert_many(data["response"])
+    await collection.delete_many({}) # 清空collection
+    await collection.insert_many(data["response"])
     
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
     
-    # for result in collection.find({}, {"_id": 0}): # Demo
+    # for result in await collection.find({}, {"_id": 0}): # Demo
     #     if "available" in result:
     #         status = parkingLevelToStatus(result['parkingLevel'])
     #         content = {

@@ -32,13 +32,13 @@ async def getWeatherIcon(type1: str = "all", token: HTTPAuthorizationCredentials
     
     match type1:
         case "all":
-                result = collection.find({},{"_id":0})
+                result = await collection.find({},{"_id":0})
         case "晴":
-                result = collection.find({"type1": "晴"}, {"_id":0})
+                result = await collection.find({"type1": "晴"}, {"_id":0})
         case "多雲":
-                result = collection.find({"type1": "多雲"}, {"_id":0})
+                result = await collection.find({"type1": "多雲"}, {"_id":0})
         case "陰":
-                result = collection.find({"type1": "陰"}, {"_id":0})
+                result = await collection.find({"type1": "陰"}, {"_id":0})
     
     return list(result)
 
@@ -94,7 +94,7 @@ async def updateWeatherIcon(data: weather_icon, token: HTTPAuthorizationCredenti
 #     """
 #     Token.verifyToken(token.credentials,"admin") # JWT驗證
     
-#     if collection.find_one({"type": data.type, "weather": data.weather}) != None:
+#     if  await collection.find_one({"type": data.type, "weather": data.weather}) != None:
 #         return {"message":f"新增失敗，已有此類別與天氣狀態 ({data.type}-{data.weather})"}
 #     else:
 #         collection.insert_one(data.dict())

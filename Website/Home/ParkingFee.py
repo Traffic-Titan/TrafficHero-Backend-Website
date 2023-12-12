@@ -31,20 +31,14 @@ async def updateParkingFee_SystemStatusAPI(token: HTTPAuthorizationCredentials =
 async def updateParkingFee_SystemStatus():
     collection = await MongoDB.getCollection("traffic_hero", "parking_fee")  # 連線MongoDB
 
-    cursor = collection.find({"area": "test"}, {"_id": 0})
-    test_data = await cursor.to_list(length=1)
-    if test_data:
-        test_data = test_data[0]  # 取得資料庫內容
-    else:
-        # 處理未找到測試數據的情況
-        return {"message": "未找到測試數據"}
+    test_data = await collection.find_one({"area": "test"}, {"_id": 0})
 
     data_cursor = collection.find({}, {"_id": 0})
-    data = await data_cursor.to_list(length=100)  # 假設您希望返回最多 100 條記錄
+    data = await data_cursor.to_list(length=100)
     for d in data:
         await process(d, test_data)
 
-    return {"message": "更新成功"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 
 async def process(d, test_data):

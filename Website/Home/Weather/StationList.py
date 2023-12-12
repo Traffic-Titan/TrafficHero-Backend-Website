@@ -11,7 +11,7 @@ import os
 
 router = APIRouter(tags=["1.首頁(Website)"],prefix="/Website/Home")
 
-@router.put("/Weather/StationList", summary="【Update】中央氣象署-無人氣象測站清單") 
+@router.put("/Weather/StationList", summary="【Update】中央氣象署-無人氣象測站清單(需修改)") 
 async def updateStationListAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         """
         一、資料來源: \n
@@ -38,13 +38,13 @@ async def updateStationList():
                 
                 documents = []
                 for d in data['records']["data"]["stationStatus"]['station']:
-                        if len(list(collection.find({"stationId": d['StationID']},{"_id":0}))) != 0:
+                        if await collection.find_one({"stationId": d['StationID']}) is not None:
                                 documents.append(d)
                                 
                 collection = await MongoDB.getCollection("traffic_hero","weather_station_list") # 取得無人氣象測站資料
-                collection.delete_many({}) # 清空資料庫
-                collection.insert_many(documents) # 將無人氣象測站資料存入資料庫
+                await collection.delete_many({}) # 清空資料庫
+                await collection.insert_many(documents)
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
         
-        return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+        return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}

@@ -26,7 +26,7 @@ async def CityCarPark_ParkingNum(token: HTTPAuthorizationCredentials = Depends(H
 async def updateInfo():
     collection = await MongoDB.getCollection("traffic_hero","information_parking_city_parking_num")
     
-    collection.drop() # 刪除該collection所有資料
+    await collection.drop() # 刪除該collection所有資料
     documents = []
 
     County = ['Taipei','Taoyuan','Taichung','Tainan','Kaohsiung','Keelung','Hsinchu','MiaoliCounty','NantouCounty','ChiayiCounty','Chiayi','PingtungCounty','YilanCounty','HualienCounty','TaitungCounty','KinmenCounty','LienchiangCounty']
@@ -48,6 +48,6 @@ async def updateInfo():
     except Exception as e:
         print(e)
 
-    collection.insert_many(documents)
+    await collection.insert_many(documents)
 
-    return f"已更新筆數:{collection.count_documents({})}"
+    return f"已更新筆數:{await collection.count_documents({})}"

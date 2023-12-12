@@ -28,9 +28,9 @@ async def update():
                 url = f"https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/Tourism?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料
                 
-                collection.drop() # 刪除該collection所有資料
-                collection.insert_many(data['CarParks']) # 將資料存入MongoDB
+                await collection.drop() # 刪除該collection所有資料
+                await collection.insert_many(data['CarParks']) # 將資料存入MongoDB
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-        return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+        return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}

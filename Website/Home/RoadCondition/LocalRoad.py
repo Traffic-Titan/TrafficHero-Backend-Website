@@ -37,12 +37,12 @@ async def updateRoadCondition_LocalRoad_CMS_List():
                         data = TDX.getData(url) # 取得資料
                         documents.extend(data.get("CMSs"))
                 
-                collection.drop() # 刪除該collection所有資料
-                collection.insert_many(documents) # 將資料存入MongoDB
+                await collection.drop() # 刪除該collection所有資料
+                await collection.insert_many(documents) # 將資料存入MongoDB
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-        return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+        return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 @router.put("/RoadCondition/LocalRoad/CMS/Content",summary="【Update】附近路況-地區道路CMS顯示內容")
 async def updateRoadCondition_LocalRoad_CMS_ContentAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -78,12 +78,12 @@ async def updateRoadCondition_LocalRoad_CMS_Content():
                                                 "Messages": messages
                                         })
                 
-                collection.drop() # 刪除該collection所有資料
-                collection.insert_many(documents) # 將資料存入MongoDB
+                await collection.drop() # 刪除該collection所有資料
+                await collection.insert_many(documents) # 將資料存入MongoDB
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-        return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+        return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 async def process(message: str): # 將(圖)前面的字串刪除
         result = re.sub(r'.*\(圖\)', '', message)
@@ -110,11 +110,11 @@ async def updateRoadCondition_LocalRoad():
     collection_cms_content = await MongoDB.getCollection("traffic_hero", "road_condition_local_road_cms_content")
     
     try:
-        data = collection_cms_list.find({}, {"_id": 0})
+        # data = await collection_cms_list.find({}, {"_id": 0})
         documents = []
 
-        for d in data:
-            cms_content = collection_cms_content.find_one({"CMSID": d.get("CMSID")}, {"_id": 0, "Messages": 1})
+        async for d in collection_cms_list.find({}, {"_id": 0}):
+            cms_content = await collection_cms_content.find_one({"CMSID": d.get("CMSID")}, {"_id": 0, "Messages": 1})
             
             if cms_content:
                 documents.append({
@@ -127,10 +127,10 @@ async def updateRoadCondition_LocalRoad():
                     "content": cms_content.get("Messages")
                 })
 
-        collection.drop()
-        collection.insert_many(documents)
+        await collection.drop()
+        await collection.insert_many(documents)
         
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}

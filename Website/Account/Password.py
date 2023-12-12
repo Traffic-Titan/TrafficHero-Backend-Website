@@ -25,7 +25,7 @@ async def changePassword(user: ChangePasswordModel, token: HTTPAuthorizationCred
     collection = await MongoDB.getCollection("traffic_hero","user_data")
 
     # 查詢使用者記錄，同時驗證舊密碼和Token的有效性
-    result = collection.find_one({
+    result =  await collection.find_one({
         "email": user.email,
         "$or": [
             {"password": hashlib.sha256(user.old_password.encode()).hexdigest()},
@@ -61,7 +61,7 @@ async def forgotPassword(user: ForgetPasswordModel, token: HTTPAuthorizationCred
     
     # 檢查電子郵件是否存在於資料庫中
     collection = await MongoDB.getCollection("traffic_hero","user_data")
-    result = collection.find_one({"email": user.email, "email_confirmed": True, "birthday": user.birthday})
+    result =  await collection.find_one({"email": user.email, "email_confirmed": True, "birthday": user.birthday})
     if result is None:
         raise HTTPException(status_code=404, detail="查無此帳號，請重新輸入")
 

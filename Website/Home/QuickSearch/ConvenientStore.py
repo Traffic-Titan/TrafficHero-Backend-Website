@@ -67,10 +67,10 @@ router = APIRouter(tags=["1.首頁(Website)"],prefix="/Website/Home")
 #                                 documents.append(document)
                                                 
 #                 # 刪除舊的collection資料
-#                 collection.drop()
+#                 await collection.drop()
 
 #                 # 插入新的資料
-#                 collection.insert_many(documents)
-#                 return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+#                 await collection.insert_many(documents)
+#                 return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 #         except Exception as e:
 #                 return {"message": f"更新失敗，錯誤訊息:{e}"}

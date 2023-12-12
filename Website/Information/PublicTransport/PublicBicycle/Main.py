@@ -26,7 +26,7 @@ async def updateStation(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     collection_list = await MongoDB.getCollection("traffic_hero", "information_public_bicycle_list")
     collection_availability = await MongoDB.getCollection("traffic_hero", "information_public_bicycle_availability")
     
-    collection.drop() # 刪除所有資料
+    await collection.drop() # 刪除所有資料
     
     try:
         # 建立索引
@@ -79,7 +79,7 @@ async def updateStation(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
         
     
     # 合併以下資料至collection
@@ -149,11 +149,11 @@ async def updateStation(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     #             "update_time": availability["UpdateTime"]
     #         })
 
-    #     collection.drop()
-    #     collection.insert_many(documents)
+    #     await collection.drop()
+    #     await collection.insert_many(documents)
         
     # except Exception as e:
     #     return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    # return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    # return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
     

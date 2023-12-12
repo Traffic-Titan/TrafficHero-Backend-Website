@@ -60,7 +60,7 @@ async def updateNews():
         data = TDX.getData(url)
         
         documents = []
-        logo_url = Logo.get("provincial_highway", "All")
+        logo_url = await Logo.get("provincial_highway", "All")
         
         collection = await MongoDB.getCollection("traffic_hero", "road_area")
         for d in data["Newses"]:
@@ -69,7 +69,7 @@ async def updateNews():
             match = re.search(pattern, d['Title'])
             
             if match:
-                result = collection.find_one({"RoadName": match.group()}, {"_id": 0, "CityList": 1})
+                result =  await collection.find_one({"RoadName": match.group()}, {"_id": 0, "CityList": 1})
                 for area in result.get("CityList"):
                     document = {
                         "area": Area.chineseToEnglish(area.get("CityName")),
@@ -115,12 +115,12 @@ async def updateNews():
 
 
         collection = await MongoDB.getCollection("traffic_hero", "news_provincial_highway")
-        collection.drop()
-        collection.insert_many(documents)
+        await collection.drop()
+        await collection.insert_many(documents)
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
         
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 
 async def numberToText(number : int):

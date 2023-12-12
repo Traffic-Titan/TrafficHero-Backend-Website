@@ -55,11 +55,11 @@ async def startup_event():
     # PBS.getData()
     # PBS.getTaipeiRoadCondition()
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    # 在應用程式關閉時斷開連線
-    # email_server.quit()
-    MongoDB.closeConnection() # 測試中
+# @app.on_event("shutdown")
+# async def shutdown_event():
+#     # 在應用程式關閉時斷開連線
+#     # email_server.quit()
+#     MongoDB.closeConnection() # 測試中
 
 # ---------------------------------------------------------------
 
@@ -111,7 +111,7 @@ async def updateOperationalStatus():
     
     print(f"E: 更新大眾運輸 - 營運狀態 - 第{count_updateOperationalStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-# scheduler.add_job(updateOperationalStatus, 'interval', minutes = 1)
+scheduler.add_job(updateOperationalStatus, 'interval', minutes = 1)
 
 app.include_router(ParkingFee.router)
 
@@ -150,7 +150,7 @@ async def updateWeatherStation():
     
     print(f"E: 更新中央氣象署 - 無人氣象測站資料 - 第{count_updateWeatherStation}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-# scheduler.add_job(updateWeatherStation, 'interval', minutes = 10)
+scheduler.add_job(updateWeatherStation, 'interval', minutes = 10)
 
 # 排程更新 - 中央氣象署 - 無人氣象測站清單
 global count_updateWeatherStationList
@@ -166,7 +166,7 @@ async def updateWeatherStationList():
     
     print(f"E: 更新中央氣象署 - 無人氣象測站清單 - 第{count_updateWeatherStationList}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-# scheduler.add_job(updateWeatherStationList, 'interval', minutes = 1440) # 每天更新一次
+scheduler.add_job(updateWeatherStationList, 'interval', minutes = 1440) # 每天更新一次
 
 from Website.Home.RoadCondition import Main as RoadCondition_Main 
 from Website.Home.RoadCondition import ProvincialHighway as RoadCondition_ProvincialHighway
@@ -201,7 +201,7 @@ async def updateRoadCondition():
     
     print(f"E: 更新CMS路況速報 - 第{count_updateRoadCondition}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-# scheduler.add_job(updateRoadCondition, 'interval', minutes = 5) # 每天更新一次
+scheduler.add_job(updateRoadCondition, 'interval', minutes = 5) # 每天更新一次
 
 from Website.Home.QuickSearch import GasStation, ConvenientStore
 app.include_router(GasStation.router)
@@ -325,7 +325,7 @@ async def updateServiceAreaData():
 #     for i in ["cms_main_car","cms_main_scooter","cms_sidebar_car","cms_sidebar_scooter"]:
 #         collection = await MongoDB.getCollection("traffic_hero",i)
 #         # 將所有的document都判斷一次有效性(若訊息已超過目前時間，則將active設定為false)
-#         documents = collection.find({"active": True})
+#         documents = await collection.find({"active": True})
         
 #         # 轉換時區(待模組化)
 #         import pytz

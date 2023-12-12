@@ -27,7 +27,7 @@ async def RoadInfo_Accident(token: HTTPAuthorizationCredentials = Depends(HTTPBe
 async def updateInfo():
     collection = await MongoDB.getCollection("traffic_hero","information_road_info_pbs_accident")
     
-    collection.drop() # 刪除該collection所有資料
+    await collection.drop() # 刪除該collection所有資料
     documents = []
 
     try:
@@ -41,6 +41,6 @@ async def updateInfo():
     except Exception as e:
         print(e)
          
-    collection.insert_many(documents)
+    await collection.insert_many(documents)
 
-    return f"已更新筆數:{collection.count_documents({})}"
+    return f"已更新筆數:{await collection.count_documents({})}"

@@ -41,7 +41,7 @@ async def updateNews():
     for area in Area.english: # 依照區域更新資料
         await dataToDatabase(area)
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
     
 async def dataToDatabase(area: str):
     collection = await MongoDB.getCollection("traffic_hero","news_taiwan_tourist_shuttle")
@@ -51,7 +51,7 @@ async def dataToDatabase(area: str):
         data = TDX.getData(url) # 取得資料
         
         documents = []
-        logo_url = Logo.get("taiwan_tourist_shuttle", "All") # 取得Logo
+        logo_url = await Logo.get("taiwan_tourist_shuttle", "All") # 取得Logo
         for d in data: # 將資料轉換成MongoDB格式
             document = {
                 "area": "All",
@@ -65,7 +65,7 @@ async def dataToDatabase(area: str):
             }
             documents.append(document)
             
-        collection.drop() # 刪除該collection所有資料
-        collection.insert_many(documents) # 將資料存入MongoDB
+        await collection.drop() # 刪除該collection所有資料
+        await collection.insert_many(documents) # 將資料存入MongoDB
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}

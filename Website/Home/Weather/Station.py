@@ -36,9 +36,9 @@ async def updateStation():
         
         try:
                 observation_station_unmanned =  requests.get(f'https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0001-001?Authorization={CWA_API_Key}').json()
-                collection.delete_many({}) # 清空資料庫
-                collection.insert_many(observation_station_unmanned['records']['location']) # 將無人氣象測站資料存入資料庫
+                await collection.delete_many({}) # 清空資料庫
+                await collection.insert_many(observation_station_unmanned['records']['Station']) # 將無人氣象測站資料存入資料庫
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
         
-        return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+        return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}

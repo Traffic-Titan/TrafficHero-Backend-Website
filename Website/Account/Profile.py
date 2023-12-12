@@ -28,7 +28,7 @@ async def viewProfile(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()
     
     # 取得使用者資料
     collection = await MongoDB.getCollection("traffic_hero","user_data")
-    result = collection.find_one({"email": payload["data"]["email"]}, {"_id": 0})
+    result =  await collection.find_one({"email": payload["data"]["email"]}, {"_id": 0})
     data = {
         "name": result["name"] if "name" in result else None,
         "email": result["email"] if "email" in result else None,
@@ -47,7 +47,7 @@ async def updateProfile(user: ProfileModel, token: HTTPAuthorizationCredentials 
     
     # 取得使用者資料
     collection = await MongoDB.getCollection("traffic_hero","user_data")
-    result = collection.find_one({"email": payload["data"]["email"]})
+    result =  await collection.find_one({"email": payload["data"]["email"]})
     
     # 更新使用者資料
     updated_data = {

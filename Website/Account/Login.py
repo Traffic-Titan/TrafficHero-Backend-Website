@@ -22,7 +22,7 @@ async def login(user: LoginModel, token: HTTPAuthorizationCredentials = Depends(
     collection = await MongoDB.getCollection("traffic_hero","user_data")
     
     # 如果查詢結果為None，表示無此帳號
-    result = collection.find_one({"email": user.email}, {"_id": 0})
+    result = await collection.find_one({"email": user.email}, {"_id": 0})
     if result is None:
         raise HTTPException(status_code=401, detail="帳號或密碼錯誤")
     

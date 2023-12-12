@@ -28,7 +28,7 @@ async def update(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     for area in areas: # 依照區域更新資料
         await dataToDatabase(area)
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
     
 async def dataToDatabase(area: str):
     collection = await MongoDB.getCollection("traffic_hero","information_bus_route")
@@ -37,7 +37,7 @@ async def dataToDatabase(area: str):
         url = f"https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/{area}?%24format=JSON" # 取得資料來源網址
         data = TDX.getData(url) # 取得資料
         
-        collection.delete_many({"area": area}) # 刪除該區域所有資料
-        collection.insert_many(data) # 將資料存入MongoDB
+        await collection.delete_many({"area": area}) # 刪除該區域所有資料
+        await collection.insert_many(data) # 將資料存入MongoDB
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}

@@ -33,7 +33,7 @@ async def register(user: ProfileModel, token: HTTPAuthorizationCredentials = Dep
     collection = await MongoDB.getCollection("traffic_hero","user_data")
 
     # 檢查 Email 是否已經存在
-    if collection.find_one({"email": user.email}, {"email_confirmed": True}):
+    if  await collection.find_one({"email": user.email}, {"email_confirmed": True}):
         raise HTTPException(status_code=400, detail="此Email已註冊，請使用其他Email")
     
     # 對密碼進行Hash處理，加上隨機的salt
