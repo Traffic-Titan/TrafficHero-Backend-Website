@@ -13,8 +13,6 @@ class weather_icon(BaseModel):
     id: str
     icon_url_day: str
     icon_url_night: str
-    
-collection = MongoDB.getCollection("traffic_hero","weather_icon")
 
 @router.get("/Weather/Icon", summary="【Read】首頁-天氣狀態圖示")
 async def getWeatherIcon(type1: str = "all", token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -29,6 +27,8 @@ async def getWeatherIcon(type1: str = "all", token: HTTPAuthorizationCredentials
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
+    
+    collection = await MongoDB.getCollection("traffic_hero","weather_icon")
     
     match type1:
         case "all":
@@ -55,6 +55,8 @@ async def updateWeatherIcon(data: weather_icon, token: HTTPAuthorizationCredenti
             1.
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證
+    
+    collection = await MongoDB.getCollection("traffic_hero","weather_icon")
     
     collection.update_one({"id": data.id},{"$set":{ "icon_url_day": data.icon_url_day,"icon_url_night": data.icon_url_night}})
     

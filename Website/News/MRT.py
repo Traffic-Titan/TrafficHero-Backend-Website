@@ -17,8 +17,6 @@ import Function.Logo as Logo
 
 router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 
-collection = MongoDB.getCollection("traffic_hero","news_mrt")
-
 @router.put("/MRT",summary="【Update】最新消息-捷運")
 async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
@@ -36,6 +34,8 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return await updateNews()
 
 async def updateNews():
+    collection = await MongoDB.getCollection("traffic_hero","news_mrt")
+    
     await dataToDatabase("TaipeiCity") # 臺北捷運
     await dataToDatabase("TaoyuanCity") # 桃園捷運
     await dataToDatabase("KaohsiungCity") # 高雄捷運
@@ -44,6 +44,8 @@ async def updateNews():
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
 async def dataToDatabase(area: str):
+    collection = await MongoDB.getCollection("traffic_hero","news_mrt")
+    
     try:
         url = Link.get("traffic_hero", "news_source", "mrt", area) # 取得資料來源網址
         data = TDX.getData(url)

@@ -10,7 +10,7 @@ import time
 
 async def getWeather(longitude: str, latitude: str):
     try:
-        collection = MongoDB.getCollection("traffic_hero","weather_station") # 取得無人氣象測站資料
+        collection = await MongoDB.getCollection("traffic_hero","weather_station") # 取得無人氣象測站資料
         pipeline = [ # 使用Aggregation Pipeline找到最近的氣象站
             {
                 "$project": {
@@ -58,7 +58,7 @@ async def getWeather(longitude: str, latitude: str):
             else:
                 type = "night"
             
-            collection = MongoDB.getCollection("traffic_hero","weather_icon") # 取得天氣圖示URL 
+            collection = await MongoDB.getCollection("traffic_hero","weather_icon") # 取得天氣圖示URL 
             weather_icon = collection.find_one({"weather": weather},{"_id":0,f"icon_url_{type}":1}) 
             weather_icon_url = weather_icon.get(f"icon_url_{type}") if weather_icon and weather_icon.get(f"icon_url_{type}") else "https://cdn3.iconfinder.com/data/icons/basic-2-black-series/64/a-92-256.png" # 預設
             

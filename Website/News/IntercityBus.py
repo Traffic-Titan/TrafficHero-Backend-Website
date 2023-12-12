@@ -16,8 +16,6 @@ from Main import MongoDB # 引用MongoDB連線實例
 
 router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 
-collection = MongoDB.getCollection("traffic_hero","news_intercity_bus")
-
 @router.put("/IntercityBus",summary="【Update】最新消息-公路客運")
 async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
@@ -35,6 +33,8 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return await updateNews()
     
 async def updateNews():
+    collection = await MongoDB.getCollection("traffic_hero","news_intercity_bus")
+    
     try:
         url = Link.get("traffic_hero", "news_source", "intercity_bus", "All") # 取得資料來源網址
         data = TDX.getData(url) # 取得資料

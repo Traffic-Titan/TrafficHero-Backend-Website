@@ -12,8 +12,6 @@ import Function.Logo as Logo
 
 router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 
-collection = MongoDB.getCollection("traffic_hero","news_public_bicycle")
-
 @router.put("/PublicBicycle",summary="【Update】最新消息-公共自行車")
 async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
@@ -30,7 +28,9 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     Token.verifyToken(token.credentials,"admin") # JWT驗證
     return await updateNews()
 
-async def updateNews():   
+async def updateNews():  
+    collection = await MongoDB.getCollection("traffic_hero","news_public_bicycle")
+     
     try:
         # Initial
         context = {}

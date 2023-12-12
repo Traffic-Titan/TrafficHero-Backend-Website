@@ -46,7 +46,7 @@ async def getServiceArea_ParkingStatus():
         if d["service_name"] in ["楊梅休息站", "關西服務區", "清水服務區", "南投服務區", "古坑服務區", "東山服務區", "石碇服務區"]:
             d["available"] = available_spaces[d["service_name"]]
     
-    collection = MongoDB.getCollection("traffic_hero","service_area_parking_status") # 取得MongoDB的collection
+    collection = await MongoDB.getCollection("traffic_hero","service_area_parking_status") # 取得MongoDB的collection
     collection.delete_many({}) # 清空collection
     collection.insert_many(data["response"])
      
@@ -61,7 +61,7 @@ async def getServiceArea_ParkingStatus():
             case _:
                 return "無資料"
     
-    collection_ServiceAreaData = MongoDB.getCollection("traffic_hero","service_area_data") # 取得MongoDB的collection
+    collection_ServiceAreaData = await MongoDB.getCollection("traffic_hero","service_area_data") # 取得MongoDB的collection
     
     # 轉換時區(待模組化)
     import pytz
@@ -161,7 +161,7 @@ async def getServiceAreaDataAPI(token: HTTPAuthorizationCredentials = Depends(HT
     
 async def getServiceAreaData():
     data = TDX.getData("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/Road/Freeway/ServiceArea?%24format=JSON")
-    collection = MongoDB.getCollection("traffic_hero","service_area_data") # 取得MongoDB的collection
+    collection = await MongoDB.getCollection("traffic_hero","service_area_data") # 取得MongoDB的collection
     collection.drop() # 清空collection
     collection.insert_many(data["CarParks"])
     
@@ -286,7 +286,7 @@ async def getServiceAreaData():
     #     {"name": "蘇澳服務區", "type": "南北向", "status": getStatus("蘇澳服務區(南北向)")},
     # ]
 
-    # collection = MongoDB.getCollection("traffic_hero","service_area_parking_status") # 取得MongoDB的collection
+    # collection = await MongoDB.getCollection("traffic_hero","service_area_parking_status") # 取得MongoDB的collection
     # collection.delete_many({}) # 清空collection
     # collection.insert_many(data)
 

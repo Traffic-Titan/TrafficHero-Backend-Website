@@ -6,7 +6,6 @@ import Service.TDX as TDX
 import requests
 
 router = APIRouter(tags=["4-1.道路資訊(Website)"],prefix="/Website/Information/Road")
-collection = MongoDB.getCollection("traffic_hero","information_road_info_pbs_road_construction")
 
 @router.put("/RoadInfo_Road_Construction",summary="【Update】道路資訊-PBS-道路施工")
 async def RoadInfo_Road_Construction(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -23,9 +22,11 @@ async def RoadInfo_Road_Construction(token: HTTPAuthorizationCredentials = Depen
     """
     Token.verifyToken(token.credentials,"admin") # JWT驗證    
 
-    return updateInfo()
+    return await updateInfo()
 
-def updateInfo():
+async def updateInfo():
+    collection = await MongoDB.getCollection("traffic_hero","information_road_info_pbs_road_construction")
+    
     collection.drop() # 刪除該collection所有資料
     documents = []
 

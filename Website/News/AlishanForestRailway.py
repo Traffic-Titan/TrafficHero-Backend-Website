@@ -9,8 +9,6 @@ from Main import MongoDB # 引用MongoDB連線實例
 
 router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 
-collection = MongoDB.getCollection("traffic_hero","news_alishan_forest_railway")
-
 @router.put("/AlishanForestRailway",summary="【Update】最新消息-阿里山林業鐵路")
 async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     """
@@ -28,6 +26,8 @@ async def updateNewsAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     return await updateNews()
 
 async def updateNews():
+    collection = await MongoDB.getCollection("traffic_hero","news_alishan_forest_railway")
+    
     try:
         url = Link.get("traffic_hero", "news_source", "alishan_forest_railway", "All") # 取得資料來源網址
         data = TDX.getData(url) # 取得資料

@@ -16,8 +16,6 @@ import Function.Link as Link
 
 router = APIRouter(tags=["2.最新消息(Website)"],prefix="/Website/News")
 
-collection = MongoDB.getCollection("News","MRT")
-
 class NewsLinkModel(BaseModel):
     Type: str
     Area: str = "All"
@@ -35,7 +33,7 @@ async def getNewsLink(data: Union[List[NewsLinkModel]], token: HTTPAuthorization
     
     Token.verifyToken(token.credentials,"user") # JWT驗證
     
-    collection = MongoDB.getCollection("News",f"{data.Type}_Link")
+    collection = await MongoDB.getCollection("News",f"{data.Type}_Link")
     
     if Area == "All":
         result = collection.find()
@@ -61,7 +59,7 @@ async def updateNewsLink(data: Union[List[NewsLinkModel]], token: HTTPAuthorizat
     
     Token.verifyToken(token.credentials,"user") # JWT驗證
     
-    collection = MongoDB.getCollection("News",f"{Type}_Link")
+    collection = await MongoDB.getCollection("News",f"{Type}_Link")
     
     for d in data:
         collection.update_one(
@@ -85,7 +83,7 @@ async def addNewsLink(data: Union[List[NewsLinkModel]], token: HTTPAuthorization
     Token.verifyToken(token.credentials,"user") # JWT驗證
     
     # 將資料存入MongoDB
-    collection = MongoDB.getCollection("News",f"{data.Type}_Link")
+    collection = await MongoDB.getCollection("News",f"{data.Type}_Link")
     collection.insert_many([{"Area": d.Area, "URL": d.URL} for d in data])
     
     return "Success"
@@ -103,7 +101,7 @@ async def deleteNewsLink(data: Union[List[NewsLinkModel]], token: HTTPAuthorizat
     Token.verifyToken(token.credentials,"user") # JWT驗證
     
     # 刪除資料
-    collection = MongoDB.getCollection("News",f"{Type}_Link")
+    collection = await MongoDB.getCollection("News",f"{Type}_Link")
     result = collection.delete_many({"Area_EN": {"$in": [item.Area_EN for item in data]}})
     
     return "Success"

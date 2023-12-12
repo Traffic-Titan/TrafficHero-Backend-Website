@@ -111,7 +111,7 @@ async def updateOperationalStatus():
     
     print(f"E: 更新大眾運輸 - 營運狀態 - 第{count_updateOperationalStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateOperationalStatus, 'interval', minutes = 1)
+# scheduler.add_job(updateOperationalStatus, 'interval', minutes = 1)
 
 app.include_router(ParkingFee.router)
 
@@ -150,7 +150,7 @@ async def updateWeatherStation():
     
     print(f"E: 更新中央氣象署 - 無人氣象測站資料 - 第{count_updateWeatherStation}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateWeatherStation, 'interval', minutes = 10)
+# scheduler.add_job(updateWeatherStation, 'interval', minutes = 10)
 
 # 排程更新 - 中央氣象署 - 無人氣象測站清單
 global count_updateWeatherStationList
@@ -166,7 +166,7 @@ async def updateWeatherStationList():
     
     print(f"E: 更新中央氣象署 - 無人氣象測站清單 - 第{count_updateWeatherStationList}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateWeatherStationList, 'interval', minutes = 1440) # 每天更新一次
+# scheduler.add_job(updateWeatherStationList, 'interval', minutes = 1440) # 每天更新一次
 
 from Website.Home.RoadCondition import Main as RoadCondition_Main 
 from Website.Home.RoadCondition import ProvincialHighway as RoadCondition_ProvincialHighway
@@ -201,7 +201,7 @@ async def updateRoadCondition():
     
     print(f"E: 更新CMS路況速報 - 第{count_updateRoadCondition}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateRoadCondition, 'interval', minutes = 5) # 每天更新一次
+# scheduler.add_job(updateRoadCondition, 'interval', minutes = 5) # 每天更新一次
 
 from Website.Home.QuickSearch import GasStation, ConvenientStore
 app.include_router(GasStation.router)
@@ -268,7 +268,7 @@ async def updateNews():
     
     print(f"E: 更新TDX - 最新消息 - 第{count_updateNews}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateNews, 'interval', minutes = 5)
+# scheduler.add_job(updateNews, 'interval', minutes = 5)
 
 # 3.即時訊息推播(Website)
 from Website.CMS import MainContent, Sidebar, ServiceArea, Shoulder, SpeedEnforcement,PBS_Traffic,Sidebar_Traffic
@@ -294,7 +294,7 @@ async def updateServiceArea_ParkingStatus():
     
     print(f"E: 更新1968 - 高速公路服務區停車位狀態 - 第{count_updateServiceArea_ParkingStatus}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateServiceArea_ParkingStatus, 'interval', minutes = 10)
+# scheduler.add_job(updateServiceArea_ParkingStatus, 'interval', minutes = 10)
 
 # 排程更新 - 高速公路服務區停車場資料
 global count_updateServiceAreaData
@@ -310,7 +310,7 @@ async def updateServiceAreaData():
     
     print(f"E: 更新1968 - 高速公路服務區停車場資料 - 第{count_updateServiceAreaData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateServiceAreaData, 'interval', days = 1)
+# scheduler.add_job(updateServiceAreaData, 'interval', days = 1)
 
 # # 排程更新 - 即時訊息推播訊息 - 推播有效性判斷 # 測試中
 # global count_cms_effectiveness
@@ -323,7 +323,7 @@ scheduler.add_job(updateServiceAreaData, 'interval', days = 1)
 #     print(f"S: 更新即時訊息推播訊息 - 推播有效性判斷 - 第{count_cms_effectiveness}次 - {Time.format(str(Time.getCurrentDatetime()))}")
     
 #     for i in ["cms_main_car","cms_main_scooter","cms_sidebar_car","cms_sidebar_scooter"]:
-#         collection = MongoDB.getCollection("traffic_hero",i)
+#         collection = await MongoDB.getCollection("traffic_hero",i)
 #         # 將所有的document都判斷一次有效性(若訊息已超過目前時間，則將active設定為false)
 #         documents = collection.find({"active": True})
         
@@ -337,7 +337,7 @@ scheduler.add_job(updateServiceAreaData, 'interval', days = 1)
     
 #     print(f"E: 更新即時訊息推播訊息 - 推播有效性判斷 - 第{count_cms_effectiveness}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-# scheduler.add_job(update_CMS_Effectiveness, 'interval', minutes = 10)
+# # scheduler.add_job(update_CMS_Effectiveness, 'interval', minutes = 10)
 
 # 4-1.道路資訊(Website)
 from Website.Information.Road import Main,CityCarPark_ParkingNum,CityCarPark_ParkingInfo,RoadInfo_Road_Construction,RoadInfo_Accident,RoadInfo_Trafficjam,RoadInfo_Traffic_Control
@@ -394,7 +394,7 @@ async def updateTourismData():
     
     print(f"E: 更新TDX - 觀光資訊 - 第{count_updateTourismData}次 - {Time.format(str(Time.getCurrentDatetime()))}")
 
-scheduler.add_job(updateTourismData, 'interval', minutes = 40)
+# scheduler.add_job(updateTourismData, 'interval', minutes = 40)
 
 
 # ---------------------------------------------------------------

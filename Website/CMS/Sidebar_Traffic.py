@@ -20,7 +20,7 @@ router = APIRouter(tags=["3.即時訊息推播(Website)"],prefix="/Website/CMS")
 async def getSidebar_TrafficAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     Token.verifyToken(token.credentials,"user") # JWT驗證
 
-    collection = MongoDB.getCollection("traffic_hero","sidebar_car_testing") # 取得MongoDB的collection
+    collection = await MongoDB.getCollection("traffic_hero","sidebar_car_testing") # 取得MongoDB的collection
 
     documents = []
 

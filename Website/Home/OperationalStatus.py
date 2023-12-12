@@ -9,7 +9,6 @@ import time
 import Function.Logo as Logo
 
 router = APIRouter(tags=["1.首頁(Website)"],prefix="/Website/Home")
-collection = MongoDB.getCollection("traffic_hero","operational_status")
 
 @router.put("/OperationalStatus", summary="【Update】大眾運輸-營運狀況") # 先初步以北中南東離島分類，以後再依照縣市分類
 async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -31,6 +30,8 @@ async def updateAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer()))
     
 
 async def update():
+    collection = await MongoDB.getCollection("traffic_hero","operational_status")
+    
     # 城際
     await TRA()
     await THSR()
@@ -76,6 +77,8 @@ async def update():
     return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
 
 async def dataToDatabase(name: str, status:str, logo_url: str):
+    collection = await MongoDB.getCollection("traffic_hero","operational_status")
+    
     try:
         document = {
             "name": name,

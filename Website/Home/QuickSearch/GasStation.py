@@ -23,10 +23,10 @@ async def updateGasStationListAPI(token: HTTPAuthorizationCredentials = Depends(
                 1.
         """
         Token.verifyToken(token.credentials,"admin") # JWT驗證
-        return updateGasStationList()
+        return await updateGasStationList()
 
-def updateGasStationList():
-        collection = MongoDB.getCollection("traffic_hero","gas_station_list")
+async def updateGasStationList():
+        collection = await MongoDB.getCollection("traffic_hero","gas_station_list")
         
         try:
                 # XML資料的網址

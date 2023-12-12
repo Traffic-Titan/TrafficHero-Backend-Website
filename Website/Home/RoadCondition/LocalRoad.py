@@ -28,7 +28,7 @@ async def updateRoadCondition_LocalRoad_CMS_ListAPI(token: HTTPAuthorizationCred
         return await updateRoadCondition_LocalRoad_CMS_List()
 
 async def updateRoadCondition_LocalRoad_CMS_List():
-        collection = MongoDB.getCollection("traffic_hero","road_condition_local_road_cms_list")
+        collection = await MongoDB.getCollection("traffic_hero","road_condition_local_road_cms_list")
         try:
                 areas = ["Taipei","NewTaipei","Taoyuan","Taichung","Hsinchu","HsinchuCounty","MiaoliCounty","Taichung","Chiayi",'ChiayiCounty',"Tainan","Kaohsiung","PingtungCounty",'YilanCounty','ChanghuaCounty','NantouCounty','YunlinCounty','TaitungCounty']
                 documents = []
@@ -61,7 +61,7 @@ async def updateRoadCondition_LocalRoad_CMS_ContentAPI(token: HTTPAuthorizationC
         return await updateRoadCondition_LocalRoad_CMS_Content()
 
 async def updateRoadCondition_LocalRoad_CMS_Content():
-        collection = MongoDB.getCollection("traffic_hero","road_condition_local_road_cms_content")
+        collection = await MongoDB.getCollection("traffic_hero","road_condition_local_road_cms_content")
         try:
                 documents = []
                 
@@ -105,9 +105,9 @@ async def updateRoadCondition_LocalRoadAPI(token: HTTPAuthorizationCredentials =
         return await updateRoadCondition_LocalRoad()
 
 async def updateRoadCondition_LocalRoad():
-    collection = MongoDB.getCollection("traffic_hero", "road_condition_local_road")
-    collection_cms_list = MongoDB.getCollection("traffic_hero", "road_condition_local_road_cms_list")
-    collection_cms_content = MongoDB.getCollection("traffic_hero", "road_condition_local_road_cms_content")
+    collection = await MongoDB.getCollection("traffic_hero", "road_condition_local_road")
+    collection_cms_list = await MongoDB.getCollection("traffic_hero", "road_condition_local_road_cms_list")
+    collection_cms_content = await MongoDB.getCollection("traffic_hero", "road_condition_local_road_cms_content")
     
     try:
         data = collection_cms_list.find({}, {"_id": 0})
