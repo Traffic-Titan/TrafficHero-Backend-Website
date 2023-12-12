@@ -47,8 +47,8 @@ async def getServiceArea_ParkingStatus():
             d["available"] = available_spaces[d["service_name"]]
     
     collection = await MongoDB.getCollection("traffic_hero","service_area_parking_status") # 取得MongoDB的collection
-    collection.delete_many({}) # 清空collection
-    collection.insert_many(data["response"])
+    await collection.delete_many({}) # 清空collection
+    await collection.insert_many(data["response"])
      
     def parkingLevelToStatus(parkingLevel):
         match parkingLevel:
@@ -68,7 +68,7 @@ async def getServiceArea_ParkingStatus():
     taipei_timezone = pytz.timezone('Asia/Taipei')
     current_time = datetime.now(taipei_timezone)
 
-    for result in collection.find({}, {"_id": 0}): # Demo
+    for result in await collection.find({}, {"_id": 0}): # Demo
         service_area = list(collection_ServiceAreaData.find({"CarParkName.Zh_tw": {"$regex": result["service_name"][:2]}}, {"_id": 0}))
         if len(service_area) > 1: # 有些服務區有區分南北向，有些是共用同一個服務區
             for i in service_area:
@@ -141,7 +141,7 @@ async def getServiceArea_ParkingStatus():
 
         CMS_MainContent.create("car", content)
  
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 @router.put("/ServiceArea/Data", summary="【Update】即時訊息推播-高速公路服務區停車場資料")
 async def getServiceAreaDataAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -162,10 +162,10 @@ async def getServiceAreaDataAPI(token: HTTPAuthorizationCredentials = Depends(HT
 async def getServiceAreaData():
     data = TDX.getData("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/Road/Freeway/ServiceArea?%24format=JSON")
     collection = await MongoDB.getCollection("traffic_hero","service_area_data") # 取得MongoDB的collection
-    collection.drop() # 清空collection
-    collection.insert_many(data["CarParks"])
+    await collection.drop() # 清空collection
+    await collection.insert_many(data["CarParks"])
     
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 
 
@@ -287,7 +287,7 @@ async def getServiceAreaData():
     # ]
 
     # collection = await MongoDB.getCollection("traffic_hero","service_area_parking_status") # 取得MongoDB的collection
-    # collection.delete_many({}) # 清空collection
-    # collection.insert_many(data)
+    # await collection.delete_many({}) # 清空collection
+    # await collection.insert_many(data)
 
     # os.remove("screenshot.png") # 刪除截圖

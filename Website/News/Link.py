@@ -36,9 +36,9 @@ async def getNewsLink(data: Union[List[NewsLinkModel]], token: HTTPAuthorization
     collection = await MongoDB.getCollection("News",f"{data.Type}_Link")
     
     if Area == "All":
-        result = collection.find()
+        result = await collection.find()
     else:
-        result = collection.find({"Area": data.Area})
+        result = await collection.find({"Area": data.Area})
     
     documents = []
     for d in result:
@@ -84,7 +84,7 @@ async def addNewsLink(data: Union[List[NewsLinkModel]], token: HTTPAuthorization
     
     # 將資料存入MongoDB
     collection = await MongoDB.getCollection("News",f"{data.Type}_Link")
-    collection.insert_many([{"Area": d.Area, "URL": d.URL} for d in data])
+    await collection.insert_many([{"Area": d.Area, "URL": d.URL} for d in data])
     
     return "Success"
 
@@ -102,6 +102,6 @@ async def deleteNewsLink(data: Union[List[NewsLinkModel]], token: HTTPAuthorizat
     
     # 刪除資料
     collection = await MongoDB.getCollection("News",f"{Type}_Link")
-    result = collection.delete_many({"Area_EN": {"$in": [item.Area_EN for item in data]}})
+    result = await collection.delete_many({"Area_EN": {"$in": [item.Area_EN for item in data]}})
     
     return "Success"

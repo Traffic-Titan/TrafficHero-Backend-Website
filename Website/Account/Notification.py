@@ -23,7 +23,7 @@ async def broadcast(title: str, body: str, token: HTTPAuthorizationCredentials =
     collection = await MongoDB.getCollection("traffic_hero","user_data") # 連線MongoDB
     
     # 查詢所有已訂閱的使用者
-    subscribers = collection.find({"notification_token": {"$exists": True}}, {"_id": 0, "notification_token": 1})
+    subscribers = await collection.find({"notification_token": {"$exists": True}}, {"_id": 0, "notification_token": 1})
 
     # 逐一發送通知給所有訂閱者的所有裝置
     for subscriber in subscribers:

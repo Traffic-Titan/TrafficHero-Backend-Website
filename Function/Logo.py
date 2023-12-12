@@ -2,7 +2,7 @@ from Main import MongoDB # 引用MongoDB連線實例
 
 async def get(type: str, area: str):
     collection = await MongoDB.getCollection("traffic_hero","news_logo")
-    result = collection.find_one({"area": area, "type": type}, {"_id": 0, "logo_url": 1})
+    result =  await collection.find_one({"area": area, "type": type}, {"_id": 0, "logo_url": 1})
     if result:
         return result["logo_url"]
     else:

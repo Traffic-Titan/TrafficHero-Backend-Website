@@ -14,7 +14,7 @@ async def get(Type: str, Area: str, token: HTTPAuthorizationCredentials = Depend
     Token.verifyToken(token.credentials,"user") # JWT驗證
     
     collection = await MongoDB.getCollection("Logo",Type)
-    result = collection.find_one({"Area": Area})
+    result =  await collection.find_one({"Area": Area})
     return result["Logo"]
 
 @router.get("/MRT",summary="【Read】取得各捷運Logo, 臺北捷運: TRTC, 桃園捷運: TYMC, 高雄捷運: KRTC, 高雄輕軌: KLRT(Dev)")
@@ -25,16 +25,16 @@ async def getMRTLogo(Region: str, token: HTTPAuthorizationCredentials = Depends(
     
     match Region:
         case "TRTC":
-            data = collection.find_one({"Region_EN": "TRTC"})
+            data =  await collection.find_one({"Region_EN": "TRTC"})
             return data["Logo"]
         case "TYMC":
-            data = collection.find_one({"Region_EN": "TYMC"})
+            data =  await collection.find_one({"Region_EN": "TYMC"})
             return data["Logo"]
         case "KRTC":
-            data = collection.find_one({"Region_EN": "KRTC"})
+            data =  await collection.find_one({"Region_EN": "KRTC"})
             return data["Logo"]
         case "KLRT":
-            data = collection.find_one({"Region_EN": "KLRT"})
+            data =  await collection.find_one({"Region_EN": "KLRT"})
             return data["Logo"]
         case _:
             return "No Data"
@@ -50,6 +50,6 @@ async def setMRTLogo(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())
     Token.verifyToken(token.credentials,"user") # JWT驗證
     
     collection = await MongoDB.getCollection("2_Universal","Logo")
-    collection.drop()
+    await collection.drop()
 
     return "Success"

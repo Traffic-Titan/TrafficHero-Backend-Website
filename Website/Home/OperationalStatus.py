@@ -74,7 +74,7 @@ async def update():
     # 離島      
     await Bus_v2("PenghuCounty")
     
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 async def dataToDatabase(name: str, status:str, logo_url: str):
     collection = await MongoDB.getCollection("traffic_hero","operational_status")
@@ -87,8 +87,8 @@ async def dataToDatabase(name: str, status:str, logo_url: str):
             "logo_url": logo_url
         }
 
-        collection.delete_many({"name": name}) # 刪除該類別的所有資料
-        collection.insert_one(document) # 將資料存入MongoDB
+        await collection.delete_many({"name": name}) # 刪除該類別的所有資料
+        await collection.insert_one(document) # 將資料存入MongoDB
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
@@ -109,7 +109,7 @@ async def TRA(): # 臺鐵
     except Exception as e:
         print(e)
             
-    await dataToDatabase("臺鐵", status, Logo.get("taiwan_railway", "All"))
+    await dataToDatabase("臺鐵", status, await Logo.get("taiwan_railway", "All"))
 
 async def THSR(): # 高鐵
     url = "https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/AlertInfo?%24format=JSON" # 先寫死，以後會再放到資料庫
@@ -128,7 +128,7 @@ async def THSR(): # 高鐵
     except Exception as e:
         print(e)
             
-    await dataToDatabase("高鐵", status, Logo.get("taiwan_high_speed_rail", "All"))
+    await dataToDatabase("高鐵", status, await Logo.get("taiwan_high_speed_rail", "All"))
 
 async def MRT(system: str): # 捷運
     url = f"https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/Alert/{system}?%24format=JSON" # 先寫死，以後會再放到資料庫
@@ -149,15 +149,15 @@ async def MRT(system: str): # 捷運
     
     match system:
         case "TRTC":
-            await dataToDatabase("臺北捷運", status, Logo.get("mrt", "TaipeiCity"))
+            await dataToDatabase("臺北捷運", status, await Logo.get("mrt", "TaipeiCity"))
         case "TYMC":
-            await dataToDatabase("桃園捷運", status, Logo.get("mrt", "TaoyuanCity"))
+            await dataToDatabase("桃園捷運", status, await Logo.get("mrt", "TaoyuanCity"))
         case "KRTC":
-            await dataToDatabase("高雄捷運", status, Logo.get("mrt", "KaohsiungCity"))
+            await dataToDatabase("高雄捷運", status, await Logo.get("mrt", "KaohsiungCity"))
         case "TRTCMG":
-            await dataToDatabase("貓空纜車", status, Logo.get("mrt", "TaipeiCity"))
+            await dataToDatabase("貓空纜車", status, await Logo.get("mrt", "TaipeiCity"))
         case "TMRT":
-            await dataToDatabase("臺中捷運", status, Logo.get("mrt", "TaichungCity"))
+            await dataToDatabase("臺中捷運", status, await Logo.get("mrt", "TaichungCity"))
 
 async def InterCityBus(): # 公路客運
     url = "https://tdx.transportdata.tw/api/basic/v2/Bus/Alert/InterCity?%24format=JSON" # 先寫死，以後會再放到資料庫
@@ -175,7 +175,7 @@ async def InterCityBus(): # 公路客運
     except Exception as e:
         print(e)
         
-    await dataToDatabase("公路客運", status, Logo.get("intercity_bus", "All"))
+    await dataToDatabase("公路客運", status, await Logo.get("intercity_bus", "All"))
 
 async def Bus_v2(area: str): # 各縣市公車
     url = f"https://tdx.transportdata.tw/api/basic/v2/Bus/Alert/City/{area}?%24format=JSON" # 先寫死，以後會再放到資料庫
@@ -195,43 +195,43 @@ async def Bus_v2(area: str): # 各縣市公車
         
     match area:
         case "Keelung":
-            await dataToDatabase("基隆市公車", status, Logo.get("bus", "KeelungCity"))
+            await dataToDatabase("基隆市公車", status, await Logo.get("bus", "KeelungCity"))
         case "Taipei":
-            await dataToDatabase("臺北市公車", status, Logo.get("bus", "TaipeiCity"))
+            await dataToDatabase("臺北市公車", status, await Logo.get("bus", "TaipeiCity"))
         case "NewTaipei":
-            await dataToDatabase("新北市公車", status, Logo.get("bus", "NewTaipeiCity"))
+            await dataToDatabase("新北市公車", status, await Logo.get("bus", "NewTaipeiCity"))
         case "Taoyuan":
-            await dataToDatabase("桃園市公車", status, Logo.get("bus", "TaoyuanCity"))
+            await dataToDatabase("桃園市公車", status, await Logo.get("bus", "TaoyuanCity"))
         case "Hsinchu":
-            await dataToDatabase("新竹市公車", status, Logo.get("bus", "HsinchuCity"))
+            await dataToDatabase("新竹市公車", status, await Logo.get("bus", "HsinchuCity"))
         case "HsinchuCounty":
-            await dataToDatabase("新竹縣公車", status, Logo.get("bus", "HsinchuCounty"))
+            await dataToDatabase("新竹縣公車", status, await Logo.get("bus", "HsinchuCounty"))
         case "MiaoliCounty":
-            await dataToDatabase("苗栗縣公車", status, Logo.get("bus", "MiaoliCounty"))
+            await dataToDatabase("苗栗縣公車", status, await Logo.get("bus", "MiaoliCounty"))
         case "Taichung":
-            await dataToDatabase("臺中市公車", status, Logo.get("bus", "TaichungCity"))
+            await dataToDatabase("臺中市公車", status, await Logo.get("bus", "TaichungCity"))
         case "ChanghuaCounty":
-            await dataToDatabase("彰化縣公車", status, Logo.get("bus", "ChanghuaCounty"))
+            await dataToDatabase("彰化縣公車", status, await Logo.get("bus", "ChanghuaCounty"))
         case "YunlinCounty":
-            await dataToDatabase("雲林縣公車", status, Logo.get("bus", "YunlinCounty"))
+            await dataToDatabase("雲林縣公車", status, await Logo.get("bus", "YunlinCounty"))
         case "Chiayi":
-            await dataToDatabase("嘉義市公車", status, Logo.get("bus", "ChiayiCity"))
+            await dataToDatabase("嘉義市公車", status, await Logo.get("bus", "ChiayiCity"))
         case "ChiayiCounty":
-            await dataToDatabase("嘉義縣公車", status, Logo.get("bus", "ChiayiCounty"))
+            await dataToDatabase("嘉義縣公車", status, await Logo.get("bus", "ChiayiCounty"))
         case "Tainan": # Bus_v3
             pass
         case "Kaohsiung":
-            await dataToDatabase("高雄市公車", status ,Logo.get("bus", "KaohsiungCity"))
+            await dataToDatabase("高雄市公車", status ,await Logo.get("bus", "KaohsiungCity"))
         case "PingtungCounty":
-            await dataToDatabase("屏東縣公車", status ,Logo.get("bus", "PingtungCounty"))
+            await dataToDatabase("屏東縣公車", status ,await Logo.get("bus", "PingtungCounty"))
         case "TaitungCounty":
-            await dataToDatabase("臺東縣公車", status ,Logo.get("bus", "TaitungCounty"))
+            await dataToDatabase("臺東縣公車", status ,await Logo.get("bus", "TaitungCounty"))
         case "HualienCounty":
-            await dataToDatabase("花蓮縣公車", status ,Logo.get("bus", "HualienCounty"))
+            await dataToDatabase("花蓮縣公車", status ,await Logo.get("bus", "HualienCounty"))
         case "YilanCounty":
-            await dataToDatabase("宜蘭縣公車", status ,Logo.get("bus", "YilanCounty"))
+            await dataToDatabase("宜蘭縣公車", status ,await Logo.get("bus", "YilanCounty"))
         case "PenghuCounty":
-            await dataToDatabase("澎湖縣公車", status, Logo.get("bus", "PenghuCounty"))
+            await dataToDatabase("澎湖縣公車", status, await Logo.get("bus", "PenghuCounty"))
 
 async def Bus_v3(area: str): # 各縣市公車
     url = f"https://tdx.transportdata.tw/api/basic/v3/Bus/Alert/City/{area}?%24format=JSON" # 先寫死，以後會再放到資料庫
@@ -251,4 +251,4 @@ async def Bus_v3(area: str): # 各縣市公車
         
     match area:
         case "Tainan":
-            await dataToDatabase("臺南市公車", status, Logo.get("bus", "TainanCity"))
+            await dataToDatabase("臺南市公車", status, await Logo.get("bus", "TainanCity"))

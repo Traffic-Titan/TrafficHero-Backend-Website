@@ -21,17 +21,17 @@ async def updateBusRoute(token: HTTPAuthorizationCredentials = Depends(HTTPBeare
         Token.verifyToken(token.credentials,"admin") # JWT驗證
 
         collection = await MongoDB.getCollection("traffic_hero","information_interCity_bus_route")
-        collection.drop() # 刪除該collection所有資料
+        await collection.drop() # 刪除該collection所有資料
 
         await dataToDatabase()
 
-        return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+        return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 async def dataToDatabase():
         collection = await MongoDB.getCollection("traffic_hero","information_interCity_bus_route")
         try:
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Bus/StopOfRoute/InterCity?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料
-                collection.insert_many(data) # 將資料存入MongoDB
+                await collection.insert_many(data) # 將資料存入MongoDB
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}

@@ -37,12 +37,12 @@ async def updateNews():
             page_url = base_url + str(page)
             all_data.extend(await processData(page_url))
 
-        collection.drop() # 刪除該collection所有資料
-        collection.insert_many(all_data)  # 將資料存入MongoDB
+        await collection.drop() # 刪除該collection所有資料
+        await collection.insert_many(all_data)  # 將資料存入MongoDB
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 async def processData(url):
     try:
@@ -55,7 +55,7 @@ async def processData(url):
         all_update_time = [time.text for time in soup.find_all('span', class_="wup_time")] # 取得所有發布時間
 
         documents = [] # 儲存所有資料
-        logo_url = Logo.get("freeway", "All") # 取得Logo
+        logo_url = await Logo.get("freeway", "All") # 取得Logo
         for data in range(len(all_title)): # 將資料轉換成MongoDB格式
             document = {
                 "area": "All",

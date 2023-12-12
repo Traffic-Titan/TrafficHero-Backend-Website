@@ -33,12 +33,12 @@ async def updateRoadCondition_ProvincialHighway_CMS_List():
                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/CMS/Highway?%24format=JSON" # 取得資料來源網址
                 data = TDX.getData(url) # 取得資料
 
-                collection.drop() # 刪除該collection所有資料
-                collection.insert_many(data.get("CMSs")) # 將資料存入MongoDB
+                await collection.drop() # 刪除該collection所有資料
+                await collection.insert_many(data.get("CMSs")) # 將資料存入MongoDB
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-        return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+        return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 @router.put("/RoadCondition/ProvincialHighway/CMS/Content",summary="【Update】附近路況-省道CMS顯示內容")
 async def updateRoadCondition_ProvincialHighway_CMS_ContentAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -72,12 +72,12 @@ async def updateRoadCondition_ProvincialHighway_CMS_Content():
                                         "Messages": messages
                                 })
                 
-                collection.drop() # 刪除該collection所有資料
-                collection.insert_many(documents) # 將資料存入MongoDB
+                await collection.drop() # 刪除該collection所有資料
+                await collection.insert_many(documents) # 將資料存入MongoDB
         except Exception as e:
                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-        return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+        return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 async def process(message: str): # 將(圖)前面的字串刪除
         result = re.sub(r'.*\(圖\)', '', message)
@@ -103,11 +103,10 @@ async def updateRoadCondition_ProvincialHighway():
     collection_cms_list = await MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_list")
     collection_cms_content = await MongoDB.getCollection("traffic_hero", "road_condition_provincial_highway_cms_content")
     try:
-        data = collection_cms_list.find({}, {"_id": 0})
         documents = []
 
-        for d in data:
-                cms_content = collection_cms_content.find_one({"CMSID": d.get("CMSID")}, {"_id": 0, "Messages": 1})
+        async for d in collection_cms_list.find({}, {"_id": 0}):
+                cms_content = await collection_cms_content.find_one({"CMSID": d.get("CMSID")}, {"_id": 0, "Messages": 1})
                 
                 if cms_content:
                        message = cms_content.get("Messages")
@@ -131,14 +130,14 @@ async def updateRoadCondition_ProvincialHighway():
                                                 "content": messageArray
                                         })
 
-        collection.drop()
-        collection.insert_many(documents)
+        await collection.drop()
+        await collection.insert_many(documents)
         
     except Exception as e:
         
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 
 # @router.put("/RoadCondition/ProvincialHighway",summary="【Update】附近路況-省道車輛偵測器資料")
@@ -163,12 +162,12 @@ async def updateRoadCondition_ProvincialHighway():
 #                 url = f"https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/Live/VD/Highway?%24format=JSON" # 取得資料來源網址
 #                 data = TDX.getData(url) # 取得資料
                 
-#                 collection.drop() # 刪除該collection所有資料
-#                 collection.insert_many(data.get("VDLives")) # 將資料存入MongoDB
+#                 await collection.drop() # 刪除該collection所有資料
+#                 await collection.insert_many(data.get("VDLives")) # 將資料存入MongoDB
 #         except Exception as e:
 #                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-#         return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+#         return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 # @router.put("/RoadCondition/ProvincialHighwayList",summary="【Update】附近路況-省道車輛偵測器列表")
 # async def updateRoadCondition_ProvincialHighwayListAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
@@ -213,12 +212,12 @@ async def updateRoadCondition_ProvincialHighway():
 #                                 }
 #                         })
                 
-#                 collection.drop() # 刪除該collection所有資料
-#                 collection.insert_many(documents) # 將資料存入MongoDB
+#                 await collection.drop() # 刪除該collection所有資料
+#                 await collection.insert_many(documents) # 將資料存入MongoDB
 #         except Exception as e:
 #                 return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-#         return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+#         return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 # @router.put("/RoadCondition/test",summary="【Update】附近路況-test(Dev)")
 # async def test(latitude: str, longitude: str, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):

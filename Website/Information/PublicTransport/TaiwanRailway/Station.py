@@ -29,10 +29,10 @@ async def update(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         
         stations = data.get("Stations", [])
         
-        collection.drop() # 刪除該collection所有資料
-        collection.insert_many(stations) # 將資料存入MongoDB
+        await collection.drop() # 刪除該collection所有資料
+        await collection.insert_many(stations) # 將資料存入MongoDB
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
     

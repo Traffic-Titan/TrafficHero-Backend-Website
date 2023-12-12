@@ -50,12 +50,12 @@ async def updateNews():
             city_data = await processData(area,soup)
             context_return.extend(city_data)
 
-        collection.drop() # 刪除該collection所有資料
-        collection.insert_many(context_return)
+        await collection.drop() # 刪除該collection所有資料
+        await collection.insert_many(context_return)
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 async def processData(area, soup): # 尚未完成縣市分類
     #  Initial
@@ -79,7 +79,7 @@ async def processData(area, soup): # 尚未完成縣市分類
         url = time.findParent('a')
         url_array.append(url.get('href'))
         
-    logo_url = Logo.get("public_bicycle", "All") # 取得Logo
+    logo_url = await Logo.get("public_bicycle", "All") # 取得Logo
     
     for data in range(0,len(all_title)):
         match area:

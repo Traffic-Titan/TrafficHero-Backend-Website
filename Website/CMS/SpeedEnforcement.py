@@ -39,8 +39,8 @@ async def getSpeedEnforcement():
     
     
     collection = await MongoDB.getCollection("traffic_hero","speed_enforcement") # 取得MongoDB的collection
-    collection.delete_many({}) # 清空collection
-    collection.insert_many(data["result"]["records"][1:]) # 第一筆資料為欄位名稱，故不加入
+    await collection.delete_many({}) # 清空collection
+    await collection.insert_many(data["result"]["records"][1:]) # 第一筆資料為欄位名稱，故不加入
 
     # 轉換時區(待模組化)
     import pytz
@@ -49,7 +49,7 @@ async def getSpeedEnforcement():
 
     # count = 0
     documents = []
-    for d in collection.find({},{"_id":0}):
+    for d in await collection.find({},{"_id":0}):
         # count += 1
         # print(f"更新第{count}筆資料")
         documents.append({
@@ -82,4 +82,4 @@ async def getSpeedEnforcement():
 
     collection_cms.insert_many(documents)
     
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}

@@ -28,12 +28,12 @@ async def update(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         data = response.json()
         
         collection = await MongoDB.getCollection("traffic_hero","information_parking_on_street_taichung")
-        collection.drop()
-        collection.insert_many(data) # 將資料存入MongoDB
+        await collection.drop()
+        await collection.insert_many(data) # 將資料存入MongoDB
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
 
 
 @router.put("/ParkingSpot/Availability/Taichung",summary="【Update】路邊停車位即時剩餘資料-臺中市")
@@ -57,9 +57,9 @@ async def update(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         data = response.json()
         
         collection = await MongoDB.getCollection("traffic_hero","information_parking_on_street_availability_taichung")
-        collection.drop()
-        collection.insert_many(data) # 將資料存入MongoDB
+        await collection.drop()
+        await collection.insert_many(data) # 將資料存入MongoDB
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}

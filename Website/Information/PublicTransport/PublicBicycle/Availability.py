@@ -22,12 +22,12 @@ async def updateStation(token: HTTPAuthorizationCredentials = Depends(HTTPBearer
     Token.verifyToken(token.credentials,"admin") # JWT驗證
 
     areas = ["Taipei","NewTaipei","Taoyuan","Hsinchu","HsinchuCounty","MiaoliCounty","Taichung","Chiayi","Tainan","Kaohsiung","PingtungCounty","KinmenCounty"]
-    collection.drop() # 刪除所有資料
+    await collection.drop() # 刪除所有資料
     
     for area in areas: # 依照區域更新資料
         await dataToDatabase(area)
 
-    return {"message": f"更新成功，總筆數:{collection.count_documents({})}"}
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
     
 async def dataToDatabase(area: str):
     collection = await MongoDB.getCollection("traffic_hero","information_public_bicycle_availability")
@@ -53,7 +53,7 @@ async def dataToDatabase(area: str):
                 "update_time": d["UpdateTime"]
             })
         
-        collection.insert_many(documents) # 將資料存入MongoDB
+        await collection.insert_many(documents) # 將資料存入MongoDB
     except Exception as e:
         return {"message": f"更新失敗，錯誤訊息:{e}"}
 

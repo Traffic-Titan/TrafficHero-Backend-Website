@@ -21,7 +21,7 @@ async def googleSSO(user: LoginModel, token: HTTPAuthorizationCredentials = Depe
     collection = await MongoDB.getCollection("traffic_hero","user_data")
     
     # 如果查詢結果為None，表示無此帳號
-    result = collection.find_one({"email": user.email}, {"_id": 0})
+    result =  await collection.find_one({"email": user.email}, {"_id": 0})
     if result is None:
         raise HTTPException(status_code=403, detail="此帳號未註冊")
     
