@@ -20,3 +20,4 @@ httpx
 bcrypt
 pandas
 pyfcm
+motor
