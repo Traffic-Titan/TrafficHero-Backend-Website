@@ -6,39 +6,80 @@ import Function.Time as Time
 import Function.VerificationCode as Code
 from Main import MongoDB # 引用MongoDB連線實例
 import Service.Token as Token
-from pyfcm import FCMNotification
 import os
 from dotenv import load_dotenv
+from firebase_admin import credentials, messaging, initialize_app
+from typing import Optional
 
 router = APIRouter(tags=["0.會員管理(Website)"],prefix="/Website/Account")
 
-FCM_API_KEY = os.getenv('FCM_API_KEY') # Firebase 金鑰
+# 初始化Firebase
+cred = credentials.Certificate("firebase.json")
+initialize_app(cred)
 
-push_service = FCMNotification(api_key=FCM_API_KEY) # 初始化 FCMNotification
+class NotificationData(BaseModel):
+    title: str
+    body: str
 
-@router.post("/Notification/Broadcast",summary="【Create】新增推播通知並發送(Dev)")
+@router.post("/Notification/Broadcast/All",summary="【Create】新增推播通知並發送")
 async def broadcast(title: str, body: str, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     payload = Token.verifyToken(token.credentials,"user") # JWT驗證
-    
-    collection = await MongoDB.getCollection("traffic_hero","user_data") # 連線MongoDB
-    
+    collection = await MongoDB.getCollection("traffic_hero", "user_data")
+
     # 查詢所有已訂閱的使用者
-    subscribers = await collection.find({"notification_token": {"$exists": True}}, {"_id": 0, "notification_token": 1})
-
-    # 逐一發送通知給所有訂閱者的所有裝置
-    for subscriber in subscribers:
+    cursor = collection.find({"notification_token": {"$exists": True}}, {"_id": 0, "notification_token": 1})
+    
+    async for subscriber in cursor:
         for device_token in subscriber.get("notification_token", []):
-            # 構建推送的訊息
-            message = {
-                "title": title,
-                "body": body,
-            }
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title=title,
+                    body=body,
+                ),
+                token=device_token,
+            )
 
-            # 使用 PyFCM 發送通知
-            result = push_service.notify_single_device(registration_id=device_token, data_message=message)
+            try:
+                response = messaging.send(message)
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Failed to send notification: {str(e)}")
 
-            # 檢查推送結果
-            if result["success"] != 1:
-                raise HTTPException(status_code=500, detail="Failed to send notification")
+    return {"message": "推播通知已發送"}
+
+class UserFilter(BaseModel):
+    email: Optional[str] = None
+    role: Optional[str] = None
+    vehicle: Optional[str] = None
+
+@router.post("/Notification/Broadcast/Specific", summary="【Create】針對特定使用者推播通知")
+async def broadcast_specific(filter: UserFilter, title: str, body: str, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+    payload = Token.verifyToken(token.credentials,"user") # JWT驗證
+
+    query = {"notification_token": {"$exists": True}}
+    if filter.email:
+        query["email"] = filter.email
+    if filter.role:
+        query["role"] = filter.role
+    if filter.vehicle:
+        query["vehicle.license_plate_number"] = filter.vehicle
+
+    collection = await MongoDB.getCollection("traffic_hero", "user_data")
+    cursor = collection.find(query, {"_id": 0, "notification_token": 1})
+
+    # 逐一發送通知給符合條件的訂閱者
+    async for subscriber in cursor:
+        for device_token in subscriber.get("notification_token", []):
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title=title,
+                    body=body,
+                ),
+                token=device_token,
+            )
+
+            try:
+                response = messaging.send(message)
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Failed to send notification: {str(e)}")
 
     return {"message": "推播通知已發送"}

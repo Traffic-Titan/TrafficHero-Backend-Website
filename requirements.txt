@@ -19,5 +19,5 @@ scipy
 httpx
 bcrypt
 pandas
-pyfcm
 motor
+firebase-admin
