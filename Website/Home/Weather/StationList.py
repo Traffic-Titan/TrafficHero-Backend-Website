@@ -38,7 +38,7 @@ async def updateStationList():
                 
                 documents = []
                 for d in data['records']["data"]["stationStatus"]['station']:
-                        if await collection.find_one({"stationId": d['StationID']}) is not None:
+                        if await collection.find_one({"StationId": d['StationID']}) is not None:
                                 documents.append(d)
                                 
                 collection = await MongoDB.getCollection("traffic_hero","weather_station_list") # 取得無人氣象測站資料
