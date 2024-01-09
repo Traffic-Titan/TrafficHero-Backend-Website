@@ -7,6 +7,8 @@ import Function.Time as Time
 # from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta
+import firebase_admin
+from firebase_admin import credentials, messaging
 
 # ---------------------------------------------------------------
 
@@ -41,6 +43,11 @@ MongoDB = MongoDBSingleton()
 @app.on_event("startup")
 async def startup_event():
     load_dotenv() # 讀取環境變數
+    
+    # 初始化Firebase
+    cred = credentials.Certificate("firebase.json")
+    firebase_admin.initialize_app(cred)
+    
     # scheduler.start() # 啟動排程
     # get_ConvenientStore()
     # SpeedLimit()
@@ -80,14 +87,18 @@ app.include_router(Token.router)
 # ---------------------------------------------------------------
 
 # 0.會員管理(Website)
-from Website.Account import Login, Register, SSO, Code, Password, Profile, Notification
+from Website.Account import Login, Register, SSO, Code, Password, Profile
 app.include_router(Login.router)
 app.include_router(Register.router)
 app.include_router(SSO.router)
 app.include_router(Password.router)
 app.include_router(Code.router)
 app.include_router(Profile.router)
-app.include_router(Notification.router)
+
+from Website.Account.Notification import Broadcast, ParkingFee, OperationalStatus
+app.include_router(Broadcast.router)
+app.include_router(ParkingFee.router)
+app.include_router(OperationalStatus.router)
 
 # 0.群組通訊(Website)
 from Website.Chat import Main
