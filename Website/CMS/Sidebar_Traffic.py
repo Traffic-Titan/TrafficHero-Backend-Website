@@ -20,7 +20,7 @@ router = APIRouter(tags=["3.即時訊息推播(Website)"],prefix="/Website/CMS")
 async def getSidebar_TrafficAPI(token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
     Token.verifyToken(token.credentials,"user") # JWT驗證
 
-    collection = await MongoDB.getCollection("traffic_hero","sidebar_car_testing") # 取得MongoDB的collection
+    collection = await MongoDB.getCollection("traffic_hero","cms_sidebar_car") # 取得MongoDB的collection
 
     documents = []
 
@@ -65,8 +65,8 @@ async def getSidebar_TrafficAPI(token: HTTPAuthorizationCredentials = Depends(HT
             ],
             "voice": "",
             "location": {
-                "longitude": data['longitude'],
-                "latitude": data['latitude']
+                "longitude": float(data['longitude']),
+                "latitude": float(data['latitude'])
             },
             "direction": "",
             "distance": 2.5,
@@ -77,5 +77,9 @@ async def getSidebar_TrafficAPI(token: HTTPAuthorizationCredentials = Depends(HT
             "id": "string"
         }
         documents.append(content)
-    return documents
+        
+    
+    await collection.insert_many(documents)
+
+    return {"message": f"更新成功，總筆數:{await collection.count_documents({})}"}
         
